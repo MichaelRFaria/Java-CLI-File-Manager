@@ -6,6 +6,12 @@ import java.io.File;
 public class Main {
     static Scanner scanner = new Scanner(System.in);
     static String defaultPath;
+    static String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files",
+            "Including: creating, reading, updating, and deleting files","Please input one of the following:",
+            "Input '1' if you would like to create a new file", "Input '2' if you would like to read from an existing file",
+            "Input '3' if you would like to modify an existing file", "Input '4' if you would like to delete an existing file",
+            "Input '0' if you would like to exit\n", "Please input an option: "};
+
 
     /*
     TODO:
@@ -19,40 +25,39 @@ public class Main {
     */
 
 
-
     public static void main(String[] args) {
         File file = new File("");
         defaultPath = file.getAbsolutePath() + "\\output\\"; // default path for files
 
-        String[] intro = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files",
-                "Including: creating, reading, updating, and deleting files", "Please input one of the following:", "Input '1' if you would like to create a new file",
-                "Input '2' if you would like to read from an existing file", "Input '3' if you would like to modify an existing file",
-                "Input '4' if you would like to delete an existing file", "Input '0' if you would like to exit\n",
-                "Please input an option: "};
+        mainMenu();
+    }
 
-        for (String line : intro) {
+    public static void mainMenu() {
+        for (String line : mainMenuText) {
             System.out.println(line);
         }
 
         while (true) {
-            try {
-                int num = scanner.nextInt();
-                if (num == 1) {
+            String choice = scanner.next();
+
+            switch (choice) {
+                case "1":
                     startCreatingFile();
-                } else if (num == 2) {
+                    break;
+                case "2":
                     readFile();
-                } else if (num == 3) {
+                    break;
+                case "3":
                     modifyFile();
-                } else if (num == 4) {
+                    break;
+                case "4":
                     deleteFile();
-                }else if (num == 0) {
+                    break;
+                case "0":
                     System.exit(0);
-                } else {
-                    System.out.println("Please input an option from the list above, try again: ");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Please input an integer, try again: ");
-                scanner.next();
+                    break;
+                default:
+                    System.out.println("Invalid input. Please try again");
             }
         }
     }
@@ -81,8 +86,9 @@ public class Main {
                     // absolute file path
                 } else if (num == 3) {
                     // navigate file paths
-                 } else if (num == 0) {
-                    //exitOption();
+                } else if (num == 0) {
+                    printMainMenuOptions();
+                    break;
                 } else {
                     System.out.println("Please input an option from the list above, try again: ");
                 }
@@ -132,5 +138,13 @@ public class Main {
     }
     public static void deleteFile() {
         System.out.println("deleting file");
+    }
+
+    public static void printMainMenuOptions() {
+        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
+
+        for (int i = 3; i < mainMenuText.length; i++) {
+            System.out.println(mainMenuText[i]);
+        }
     }
 }

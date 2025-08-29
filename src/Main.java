@@ -15,13 +15,13 @@ public class Main {
 
     /*
     TODO:
-        simplify text printing, making it easier to print and reprint
-        clear text upon entering an option, reprint when exiting an option
-        implement default file path variable for creation, reading, modification, and deleting (create data folder)
+        implement default file path variable for creation (DONE), reading, modification, and deleting (create data folder)
         implement folder navigating (page system? limit files shown by 10-20 and store the others, then allow page navigation)
+        (above could lead to a file searching option)
         implement input of absolute file path and relative file path (method to take input and check if its valid:
             file name (cant have several '.' illegal characters etc)
             for absolute, file path must exist, maybe give the option to create folders if the directory doesnt exist?)
+
     */
 
 
@@ -36,6 +36,20 @@ public class Main {
         for (String line : mainMenuText) {
             System.out.println(line);
         }
+
+        // testing absolute file paths
+
+//        File test = new File(defaultPath);
+//        try {
+//            test.createNewFile();
+//            System.out.println("created");
+//        } catch (IOException e) {
+//            System.out.println("not created");
+//        }
+//        System.out.println("is absolute: " + test.isAbsolute());
+//        System.out.println("is absolute: " + test.isDirectory());
+//        System.out.println("is absolute: " + test.isFile());
+
 
         while (true) {
             String choice = scanner.next();
@@ -63,7 +77,7 @@ public class Main {
     }
 
     /*
-    option for default file path
+    option for default file path DONE
     option for absolute file path (input)
     option for relative file path (navigation system)
      */
@@ -81,9 +95,10 @@ public class Main {
                 int num = scanner.nextInt();
                 if (num == 1) {
                     String fileName = getFileNameInput();
-                    createFile(fileName, "");
+                    createFile(fileName, false);
                 } else if (num == 2) {
-                    // absolute file path
+                    String fileName = getAbsolutePathInput();
+                    createFile(fileName, true);
                 } else if (num == 3) {
                     // navigate file paths
                 } else if (num == 0) {
@@ -99,6 +114,12 @@ public class Main {
         }
     }
 
+    // both methods below can be merged into one, but it will lead to nested if-statements within the loop, and a param
+    /*
+    TODO
+        implement actual name/path checking rules. scanner blocks on empty input, so cant if-else print an error in the while loops, for that
+        but could still check for illegal characters etc
+     */
     public static String getFileNameInput() {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Please input a valid file name: ");
@@ -111,21 +132,38 @@ public class Main {
         }
     }
 
-    public static void createFile(String fileName, String path) {
-        if (path.isEmpty()) {
+    public static String getAbsolutePathInput() {
+        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
+        System.out.println("Please input a valid absolute path: ");
+
+        while (true) {
+            String input = scanner.next();
+            File temp = new File(input);
+            if (temp.isAbsolute()) { // path checking rules go here
+                return input;
+            }
+        }
+    }
+
+    public static void createFile(String fileName, boolean absolute) {
+        String path = "";
+
+        if (!absolute) {
             path = defaultPath;
         }
+
         System.out.println("creating file");
 
         try {
-            File file = new File(defaultPath + fileName);
+            File file = new File(path + fileName);
             if (file.createNewFile()) {
                 System.out.println("successfully created " + file.getName());
             } else {
                 System.out.println(file.getName() + " already exists");
             }
         } catch (IOException e) {
-            System.out.println("An error occurred;");
+            System.out.println("An error occurred:");
+            System.out.println(e.getMessage()+"\n");
             e.printStackTrace();
         }
     }

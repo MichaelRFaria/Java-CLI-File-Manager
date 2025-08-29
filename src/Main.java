@@ -38,17 +38,56 @@ public class Main {
         }
 
         // testing absolute file paths
+//
+////        File test = new File(defaultPath);
+////        try {
+////            test.createNewFile();
+////            System.out.println("created");
+////        } catch (IOException e) {
+////            System.out.println("not created");
+////        }
+////        System.out.println("is absolute: " + test.isAbsolute());
+////        System.out.println("is absolute: " + test.isDirectory());
+////        System.out.println("is absolute: " + test.isFile());
 
-//        File test = new File(defaultPath);
-//        try {
-//            test.createNewFile();
-//            System.out.println("created");
-//        } catch (IOException e) {
-//            System.out.println("not created");
-//        }
-//        System.out.println("is absolute: " + test.isAbsolute());
-//        System.out.println("is absolute: " + test.isDirectory());
-//        System.out.println("is absolute: " + test.isFile());
+        /*
+            TODO
+                sort by alphabetical
+                    folders first
+                    files second
+                options to page up, page down, switch from viewing absolute paths to just names (boolean trigger)
+     */
+
+        // testing file nav
+
+        File navigate = new File(defaultPath);
+        File[] directories = navigate.listFiles();
+
+        int currentPage = 1;
+
+        System.out.println("Currently viewing the contents of: " + navigate + "\n");
+
+        // method maybe
+        for (int i = (currentPage - 1) * 5; i < (currentPage * 5); i++) {
+            System.out.println(directories[i].getName());
+        }
+        System.out.println("\nPage " + currentPage + " of " + (directories.length + 4) / 5);
+        /*
+        1 1
+        5 1
+        6 2
+        10 2
+         */
+
+        // << >> jump to first and last page respectively
+        System.out.println("Input '!' to switch between folders and files, '<','<<' and '>>','>' to navigate between pages");
+
+        boolean temp = true; // temp
+        while (temp) { // change to true in method
+
+        }
+
+        // test end
 
 
         while (true) {
@@ -100,7 +139,7 @@ public class Main {
                     String fileName = getAbsolutePathInput();
                     createFile(fileName, true);
                 } else if (num == 3) {
-                    // navigate file paths
+                    navigateDirs();
                 } else if (num == 0) {
                     printMainMenuOptions();
                     break;
@@ -166,6 +205,32 @@ public class Main {
             System.out.println(e.getMessage()+"\n");
             e.printStackTrace();
         }
+    }
+
+
+    public static void navigateDirs() { // sort by alphabetical, folders first, files second.
+        File navigate = new File(defaultPath);
+        File[] directories = navigate.listFiles();
+
+        /*
+        print order
+            folder path \n
+            list of 5 files
+            \n page n of m
+
+            1 0 4
+            2 5 9
+            3 10 14
+
+         */
+
+
+        int currentPage = 1;
+
+        for (int i = (currentPage - 1) * 5; i < (currentPage * 5); i++) {
+            System.out.println(directories[i]);
+        }
+
     }
 
     public static void readFile() {

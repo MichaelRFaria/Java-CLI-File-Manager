@@ -16,11 +16,14 @@ public class Main {
     /*
     TODO:
         implement default file path variable for creation (DONE), reading, modification, and deleting (create data folder)
-        implement folder navigating (page system? limit files shown by 10-20 and store the others, then allow page navigation)
+        implement folder navigating (DONE)
         (above could lead to a file searching option)
+            maybe allow user to configure how many files they would like displayed on the screen at a time
         implement input of absolute file path and relative file path (method to take input and check if its valid:
             file name (cant have several '.' illegal characters etc)
             for absolute, file path must exist, maybe give the option to create folders if the directory doesnt exist?)
+        implement exit option for each option and suboption
+            change while loop condition to a boolean variable, then set boolean to true by default, and false when a switch-case or if-conditional triggers it
 
     */
 
@@ -58,37 +61,8 @@ public class Main {
                 options to page up, page down, switch from viewing absolute paths to just names (boolean trigger)
      */
 
-        // testing file nav
-
-        File navigate = new File(defaultPath);
-        File[] directories = navigate.listFiles();
-
-        int currentPage = 1;
-
-        System.out.println("Currently viewing the contents of: " + navigate + "\n");
-
-        // method maybe
-        for (int i = (currentPage - 1) * 5; i < (currentPage * 5); i++) {
-            System.out.println(directories[i].getName());
-        }
-        System.out.println("\nPage " + currentPage + " of " + (directories.length + 4) / 5);
-        /*
-        1 1
-        5 1
-        6 2
-        10 2
-         */
-
-        // << >> jump to first and last page respectively
-        System.out.println("Input '!' to switch between folders and files, '<','<<' and '>>','>' to navigate between pages");
-
-        boolean temp = true; // temp
-        while (temp) { // change to true in method
-
-        }
-
-        // test end
-
+        // delete this
+        navigateDirs();
 
         while (true) {
             String choice = scanner.next();
@@ -209,28 +183,116 @@ public class Main {
 
 
     public static void navigateDirs() { // sort by alphabetical, folders first, files second.
+        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         File navigate = new File(defaultPath);
         File[] directories = navigate.listFiles();
 
-        /*
-        print order
-            folder path \n
-            list of 5 files
-            \n page n of m
-
-            1 0 4
-            2 5 9
-            3 10 14
-
-         */
-
+        System.out.println(navigate.getAbsolutePath());
 
         int currentPage = 1;
+        int viewType = 1; // 1 = both folders and files, 2 = folders, 3 = files
 
-        for (int i = (currentPage - 1) * 5; i < (currentPage * 5); i++) {
-            System.out.println(directories[i]);
+        updateNavigationMenu(viewType, currentPage, directories);
+
+        while (true) {
+            String input = scanner.next();
+
+            switch (input) {
+                case "$":
+                    // create file here
+                    String fileName = navigate + "\\" + getFileNameInput();
+                    createFile(fileName, true);
+
+                    directories = navigate.listFiles(); // update files list with the newly created file
+                    updateNavigationMenu(viewType,currentPage, directories);
+                    break;
+                case "!":
+                    viewType = (viewType + 1) % 3;
+                    updateNavigationMenu(viewType, currentPage, directories);
+                    break;
+                case "^":
+                    if (navigate.getParent() != null) {
+                        navigate = navigate.getParentFile();
+                        directories = navigate.listFiles();
+                    } else {
+                        System.out.println("There is no parent directory. Please pick another option");
+                    }
+                    currentPage = 1;
+                    updateNavigationMenu(viewType, currentPage, directories);
+                    break;
+                case "<":
+                    if (currentPage - 1 > 0) {
+                        currentPage--;
+                    }
+                    updateNavigationMenu(viewType, currentPage, directories);
+                    break;
+                case "<<":
+                    currentPage = 1;
+                    updateNavigationMenu(viewType, currentPage, directories);
+                    break;
+                case ">":
+                    if (currentPage < (directories.length + 4) / 5) {
+                        currentPage++;
+                    }
+                    updateNavigationMenu(viewType, currentPage, directories);
+                    break;
+                case ">>":
+                    if (currentPage < (directories.length + 4) / 5) {
+                        currentPage = (directories.length + 4) / 5;
+                    }
+                    updateNavigationMenu(viewType, currentPage, directories);
+                    break;
+                default: // inputting a folder name
+                    File temp = new File(navigate.getAbsolutePath() + "\\" + input);
+                    if (temp.isDirectory()) { // checking if subdirectory with the inputted name exists.
+                        navigate = temp;
+                        directories = temp.listFiles(); // updating file list with the files in the parent directory.
+                        currentPage = 1;
+                    } else {
+                        System.out.println("There is no subdirectory with the inputted name. Please try again");
+                        try {
+                            Thread.sleep(1500); // thread to ensure error message displays on screen momentarily before console clears.
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    updateNavigationMenu(viewType, currentPage, directories);
+                    break;
+            }
         }
 
+    }
+
+    public static void updateNavigationMenu(int viewType, int currentPage, File[] directories) {
+        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
+        String textViewType;
+
+        /*
+        TODO
+            implement sorting system, folders first, files second
+            then for viewtype 2 and 3, you can just remove the latter half of the list
+         */
+        if (viewType == 1) { // changing the message based on what is being displayed
+            textViewType = "the folders and files";
+        } else if (viewType == 2) {
+            textViewType = "the folders";
+        } else {
+            textViewType = "the files";
+        }
+
+        System.out.println("Currently viewing the " + textViewType + " of: " + directories[0].getParent() + "\n");
+
+        int i = (currentPage - 1) * 5;
+
+        while (i < (currentPage * 5) && i < directories.length) {
+            System.out.println(directories[i].getName());
+            i++;
+        }
+
+        System.out.println("\nPage " + currentPage + " of " + (directories.length + 4) / 5);
+
+        System.out.println("Input a subdirectory name to enter a subdirectory, '$' to create a file in this directory, '!' to switch between viewing folders, files or both," +
+                "'^' to exit the current directory\nand '<','<<' and '>','>>' to navigate between pages.");
     }
 
     public static void readFile() {

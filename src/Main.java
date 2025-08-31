@@ -8,15 +8,16 @@ import java.io.File;
 public class Main {
     static Scanner scanner = new Scanner(System.in);
     static String defaultPath;
-    static String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files",
-            "Including: creating, reading, updating, and deleting files","Please input one of the following:",
-            "Input '1' if you would like to create a new file", "Input '2' if you would like to read from an existing file",
-            "Input '3' if you would like to modify an existing file", "Input '4' if you would like to delete an existing file",
+    static String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
+            "Including: creating, reading/running, modifying, and deleting files/folders","Please input one of the following:",
+            "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
+            "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to delete an existing file/folder",
             "Input '0' if you would like to exit\n", "Please input an option: "};
 
 
     /*
     TODO:
+        expand all of the below to include folders based on context (ie. files end with suffixes(.txt/.exe,etc), folders dont)
         implement default file path variable for creation (DONE), reading, modification, and deleting (create data folder)
         implement folder navigating (DONE)
         (above could lead to a file searching option)
@@ -41,30 +42,6 @@ public class Main {
         for (String line : mainMenuText) {
             System.out.println(line);
         }
-
-        // testing absolute file paths
-//
-////        File test = new File(defaultPath);
-////        try {
-////            test.createNewFile();
-////            System.out.println("created");
-////        } catch (IOException e) {
-////            System.out.println("not created");
-////        }
-////        System.out.println("is absolute: " + test.isAbsolute());
-////        System.out.println("is absolute: " + test.isDirectory());
-////        System.out.println("is absolute: " + test.isFile());
-
-        /*
-            TODO
-                sort by alphabetical
-                    folders first
-                    files second
-                options to page up, page down, switch from viewing absolute paths to just names (boolean trigger)
-     */
-
-        // delete this
-        navigateDirs();
 
         while (true) {
             String choice = scanner.next();
@@ -137,7 +114,7 @@ public class Main {
      */
     public static String getFileNameInput() {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Please input a valid file name: ");
+        System.out.println("Please input a valid file/folder name: ");
 
         while (true) {
             String input = scanner.next();
@@ -167,15 +144,34 @@ public class Main {
             path = defaultPath;
         }
 
-        System.out.println("creating file");
+        System.out.println("creating file/folder");
 
         try {
+            boolean created;
             File file = new File(path + fileName);
-            if (file.createNewFile()) {
+
+            if ((path + fileName).indexOf('.') == -1) { // if there is no '.' then we must be creating a folder
+                created = file.mkdir();
+            } else { // if there is a ',' then we must be creating a file
+                created = file.createNewFile();
+            }
+
+            // printing success/error message
+            if (created) {
                 System.out.println("successfully created " + file.getName());
             } else {
                 System.out.println(file.getName() + " already exists");
             }
+
+            // ensuring there is enough time for the above message to be read
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                System.out.println("An error occurred:");
+                System.out.println(e.getMessage()+"\n");
+                e.printStackTrace();
+            }
+
         } catch (IOException e) {
             System.out.println("An error occurred:");
             System.out.println(e.getMessage()+"\n");
@@ -307,9 +303,14 @@ public class Main {
 
         System.out.println("\nPage " + currentPage + " of " + (directories.length + 4) / 5);
 
-        System.out.println("Input a subdirectory name to enter a subdirectory, '$' to create a file in this directory, '!' to switch between viewing folders, files or both," +
-                "'^' to exit the current directory\nand '<','<<' and '>','>>' to navigate between pages.");
+        System.out.println("Input a subdirectory name to enter a subdirectory, '$' to create a file/folder in this directory, '!' to switch between viewing folders, files or both, " +
+                "\n'^' to exit the current directory and '<','<<' and '>','>>' to navigate between pages.");
     }
+
+    /*
+    TODO
+        allow reading of text files, running of exes, etc
+     */
 
     public static void readFile() {
         System.out.println("reading file");

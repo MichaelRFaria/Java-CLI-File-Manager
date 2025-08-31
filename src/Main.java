@@ -9,7 +9,7 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
     static String defaultPath;
     static String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
-            "Including: creating, reading/running, modifying, and deleting files/folders","Please input one of the following:",
+            "Including: creating, reading/running, modifying, and deleting files/folders\n","Please input one of the following:",
             "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
             "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to delete an existing file/folder",
             "Input '0' if you would like to exit\n", "Please input an option: "};
@@ -68,12 +68,45 @@ public class Main {
         }
     }
 
-    /*
-    option for default file path DONE
-    option for absolute file path (input)
-    option for relative file path (navigation system)
-     */
     public static void startCreatingFile() {
+        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
+        System.out.println("Please input one of the following: ");
+        System.out.println("Input '1' if you would like to create a file in the program's default directory");
+        System.out.println("Input '2' if you would like to create a file in an inputted absolute file path");
+        System.out.println("Input '3' if you would like to navigate directories to create a file");
+        System.out.println("Input '0' if you would like to exit\n");
+        System.out.println("Please input an option: ");
+
+        while (true) {
+            try {
+                int num = scanner.nextInt();
+                if (num == 1) {
+                    String fileName = getFileNameInput();
+                    createFile(fileName, false);
+                } else if (num == 2) {
+                    String fileName = getAbsolutePathInput();
+                    createFile(fileName, true);
+                } else if (num == 3) {
+                    navigateDirs();
+                } else if (num == 0) {
+                    printMainMenuOptions();
+                    break;
+                } else {
+                    System.out.println("Please input an option from the list above, try again: ");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please input an integer, try again: ");
+                scanner.next();
+            }
+        }
+    }
+
+    /*
+    TODO
+        use map to map different combinations of mainmenu and suboption choices
+        below is dogshit but okay (4x3) 12 different statements
+     */
+    public static void subOptionMenu(int choice) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Please input one of the following: ");
         System.out.println("Input '1' if you would like to create a file in the program's default directory");
@@ -266,11 +299,37 @@ public class Main {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         String textViewType;
 
+        /*
+        TODO
+            viewtype 1 needs to be changed so that folders are shown first, and then files next
+            can do something similar to viewtype 2 and 3
+            basically created arraylist (empty), iterate through array adding folders first, then iterate again adding files (it is in alphabetical order by default
+            no need to sort beyond that)
+         */
+
         // filtering to display only files, folders, or both.
-        if (viewType == 1) {
+        if (viewType == 1) { // sorting so folders are shown before files
             textViewType = "the folders and files";
+            int i = 0;
+            File[] updatedDirectories = new File[directories.length];
+
+            // directories is already ordered alphabetically so all we need to do is add all the folders first, then files second to a new array.
+            for (File file : directories) {
+                if (file.isDirectory()) {
+                    updatedDirectories[i] = file;
+                    i++;
+                }
+            }
+
+            for (File file : directories) {
+                if (file.isFile()) {
+                    updatedDirectories[i] = file;
+                    i++;
+                }
+            }
+
+            directories = updatedDirectories;
         } else {
-            //currentPage = 1;
             ArrayList<File> updatedDirectories = new ArrayList<>(Arrays.asList(directories)); // converting array into arraylist so that files can be removed
             if (viewType == 2) {
                 textViewType = "the folders";

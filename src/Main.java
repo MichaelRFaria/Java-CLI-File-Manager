@@ -6,9 +6,9 @@ import java.util.Scanner;
 import java.io.File;
 
 public class Main {
-    static Scanner scanner = new Scanner(System.in);
-    static String defaultPath;
-    static String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
+    private static final Scanner scanner = new Scanner(System.in);
+    private static String defaultPath;
+    private static final  String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
             "Including: creating, reading/running, modifying, and deleting files/folders\n","Please input one of the following:",
             "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
             "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to delete an existing file/folder",
@@ -27,6 +27,7 @@ public class Main {
             for absolute, file path must exist, maybe give the option to create folders if the directory doesnt exist?)
         implement exit option for each option and suboption
             change while loop condition to a boolean variable, then set boolean to true by default, and false when a switch-case or if-conditional triggers it
+            after default and absolute, it should auto go back to suboption menu
 
     */
 
@@ -48,16 +49,16 @@ public class Main {
 
             switch (choice) {
                 case "1":
-                    startCreatingFile();
+                    subOptionMenu("create");
                     break;
                 case "2":
-                    readFile();
+                    subOptionMenu("open");
                     break;
                 case "3":
-                    modifyFile();
+                    subOptionMenu("modify");
                     break;
                 case "4":
-                    deleteFile();
+                    subOptionMenu("delete");
                     break;
                 case "0":
                     System.exit(0);
@@ -68,72 +69,60 @@ public class Main {
         }
     }
 
-    public static void startCreatingFile() {
+    public static void subOptionMenu(String mainOption) {
+        String fileName = null;
+        boolean isAbsolute = false;
+
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Please input one of the following: ");
-        System.out.println("Input '1' if you would like to create a file in the program's default directory");
-        System.out.println("Input '2' if you would like to create a file in an inputted absolute file path");
-        System.out.println("Input '3' if you would like to navigate directories to create a file");
+        System.out.println("Input '1' if you would like to " + mainOption + " a file in the program's default directory");
+        System.out.println("Input '2' if you would like to " + mainOption + " a file in an inputted absolute file path");
+        System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file");
         System.out.println("Input '0' if you would like to exit\n");
         System.out.println("Please input an option: ");
 
         while (true) {
             try {
                 int num = scanner.nextInt();
-                if (num == 1) {
-                    String fileName = getFileNameInput();
-                    createFile(fileName, false);
-                } else if (num == 2) {
-                    String fileName = getAbsolutePathInput();
-                    createFile(fileName, true);
-                } else if (num == 3) {
-                    navigateDirs();
-                } else if (num == 0) {
-                    printMainMenuOptions();
-                    break;
-                } else {
-                    System.out.println("Please input an option from the list above, try again: ");
+                switch (num) {
+                    case 1:
+                        fileName = getFileNameInput();
+                        break;
+                    case 2:
+                        fileName = getAbsolutePathInput();
+                        isAbsolute = true;
+                        break;
+                    case 3:
+                        navigateDirs(mainOption);
+                        break;
+                    case 0:
+                        reprintMainMenuOptions();
+                        break;
+                    default:
+                        System.out.println("Please input an option from the list above, try again: ");
+                        continue;
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Please input an integer, try again: ");
-                scanner.next();
-            }
-        }
-    }
 
-    /*
-    TODO
-        use map to map different combinations of mainmenu and suboption choices
-        below is dogshit but okay (4x3) 12 different statements
-     */
-    public static void subOptionMenu(int choice) {
-        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Please input one of the following: ");
-        System.out.println("Input '1' if you would like to create a file in the program's default directory");
-        System.out.println("Input '2' if you would like to create a file in an inputted absolute file path");
-        System.out.println("Input '3' if you would like to navigate directories to create a file");
-        System.out.println("Input '0' if you would like to exit\n");
-        System.out.println("Please input an option: ");
-
-        while (true) {
-            try {
-                int num = scanner.nextInt();
-                if (num == 1) {
-                    String fileName = getFileNameInput();
-                    createFile(fileName, false);
-                } else if (num == 2) {
-                    String fileName = getAbsolutePathInput();
-                    createFile(fileName, true);
-                } else if (num == 3) {
-                    navigateDirs();
-                } else if (num == 0) {
-                    printMainMenuOptions();
-                    break;
-                } else {
-                    System.out.println("Please input an option from the list above, try again: ");
+                if (fileName != null) { // fileName will be null if you choose to exit from the submenu, in that case we should not (and cannot) execute any of these.
+                    switch (mainOption) {
+                        case "create":
+                            createFile(fileName, isAbsolute);
+                            break;
+                        case "open":
+                            openFile(fileName, isAbsolute);
+                            break;
+                        case "modify":
+                            modifyFile(fileName, isAbsolute);
+                            break;
+                        case "delete":
+                            deleteFile(fileName, isAbsolute);
+                            break;
+                        default:
+                    }
                 }
+
             } catch (InputMismatchException e) {
-                System.out.println("Please input an integer, try again: ");
+                System.out.println("Please input a valid option, try again: ");
                 scanner.next();
             }
         }
@@ -170,10 +159,10 @@ public class Main {
         }
     }
 
-    public static void createFile(String fileName, boolean absolute) {
+    public static void createFile(String fileName, boolean isAbsolute) {
         String path = "";
 
-        if (!absolute) {
+        if (!isAbsolute) {
             path = defaultPath;
         }
 
@@ -213,7 +202,7 @@ public class Main {
     }
 
 
-    public static void navigateDirs() { // sort by alphabetical, folders first, files second.
+    public static void navigateDirs(String mainOption) { // sort by alphabetical, folders first, files second.
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         File navigate = new File(defaultPath);
         File[] directories = navigate.listFiles();
@@ -229,14 +218,28 @@ public class Main {
             String input = scanner.next();
 
             switch (input) {
+                // this should change depending on what you are doing (create/open/delete, etc)
                 case "$":
-                    // create file here
-                    String fileName = navigate + "\\" + getFileNameInput();
-                    createFile(fileName, true);
+                    switch (mainOption) {
+                        case "create":
+                            String fileName = navigate + "\\" + getFileNameInput();
+                            createFile(fileName, true);
 
-                    directories = navigate.listFiles(); // update files list with the newly created file
-                    updateNavigationMenu(viewType,currentPage, directories);
-                    break;
+                            directories = navigate.listFiles(); // update files list with the newly created file
+                            updateNavigationMenu(viewType, currentPage, directories);
+                            break;
+
+                            /*
+                            TODO
+                                add navigation method of opening/running, modifying and deleting files/folders
+                             */
+                        case "open":
+                            break;
+                        case "modify":
+                            break;
+                        case "delete":
+                            break;
+                    }
                 case "!":
                     currentPage = 1; // current page set to one to prevent empty pages from being displayed since filtering down the view changes the amount of pages.
                     viewType = (viewType + 1) % 3;
@@ -298,14 +301,6 @@ public class Main {
     public static void updateNavigationMenu(int viewType, int currentPage, File[] directories) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         String textViewType;
-
-        /*
-        TODO
-            viewtype 1 needs to be changed so that folders are shown first, and then files next
-            can do something similar to viewtype 2 and 3
-            basically created arraylist (empty), iterate through array adding folders first, then iterate again adding files (it is in alphabetical order by default
-            no need to sort beyond that)
-         */
 
         // filtering to display only files, folders, or both.
         if (viewType == 1) { // sorting so folders are shown before files
@@ -371,17 +366,17 @@ public class Main {
         allow reading of text files, running of exes, etc
      */
 
-    public static void readFile() {
+    public static void openFile(String fileName, boolean isAbsolute) {
         System.out.println("reading file");
     }
-    public static void modifyFile() {
+    public static void modifyFile(String fileName, boolean isAbsolute) {
         System.out.println("modifying file");
     }
-    public static void deleteFile() {
+    public static void deleteFile(String fileName, boolean isAbsolute) {
         System.out.println("deleting file");
     }
 
-    public static void printMainMenuOptions() {
+    public static void reprintMainMenuOptions() {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         for (int i = 3; i < mainMenuText.length; i++) {

@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,6 +160,11 @@ public class Main {
         }
     }
 
+    /*
+    TODO
+        when creating a file in default/absolute go back to sub menu after a few seconds
+     */
+
     public static void createFile(String fileName, boolean isAbsolute) {
         String path = "";
 
@@ -212,7 +218,7 @@ public class Main {
         int currentPage = 1;
         int viewType = 1; // 1 = both folders and files, 2 = folders, 3 = files
 
-        updateNavigationMenu(viewType, currentPage, directories);
+        updateNavigationMenu(viewType, currentPage, directories, mainOption);
 
         while (true) {
             String input = scanner.next();
@@ -222,11 +228,11 @@ public class Main {
                 case "$":
                     switch (mainOption) {
                         case "create":
-                            String fileName = navigate + "\\" + getFileNameInput();
-                            createFile(fileName, true);
+                            String fileName1 = navigate + "\\" + getFileNameInput();
+                            createFile(fileName1, true);
 
                             directories = navigate.listFiles(); // update files list with the newly created file
-                            updateNavigationMenu(viewType, currentPage, directories);
+                            updateNavigationMenu(viewType, currentPage, directories, mainOption);
                             break;
 
                             /*
@@ -234,6 +240,9 @@ public class Main {
                                 add navigation method of opening/running, modifying and deleting files/folders
                              */
                         case "open":
+                            String fileName2 = navigate + "\\" + getFileNameInput();
+                            openFile(fileName2, true);
+
                             break;
                         case "modify":
                             break;
@@ -243,7 +252,7 @@ public class Main {
                 case "!":
                     currentPage = 1; // current page set to one to prevent empty pages from being displayed since filtering down the view changes the amount of pages.
                     viewType = (viewType + 1) % 3;
-                    updateNavigationMenu(viewType, currentPage, directories);
+                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
                     break;
                 case "^":
                     if (navigate.getParent() != null) {
@@ -253,29 +262,29 @@ public class Main {
                         System.out.println("There is no parent directory. Please pick another option");
                     }
                     currentPage = 1;
-                    updateNavigationMenu(viewType, currentPage, directories);
+                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
                     break;
                 case "<":
                     if (currentPage - 1 > 0) {
                         currentPage--;
                     }
-                    updateNavigationMenu(viewType, currentPage, directories);
+                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
                     break;
                 case "<<":
                     currentPage = 1;
-                    updateNavigationMenu(viewType, currentPage, directories);
+                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
                     break;
                 case ">":
                     if (currentPage < (directories.length + 4) / 5) {
                         currentPage++;
                     }
-                    updateNavigationMenu(viewType, currentPage, directories);
+                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
                     break;
                 case ">>":
                     if (currentPage < (directories.length + 4) / 5) {
                         currentPage = (directories.length + 4) / 5;
                     }
-                    updateNavigationMenu(viewType, currentPage, directories);
+                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
                     break;
                 default: // inputting a folder name
                     File temp = new File(navigate.getAbsolutePath() + "\\" + input);
@@ -291,14 +300,14 @@ public class Main {
                             throw new RuntimeException(e);
                         }
                     }
-                    updateNavigationMenu(viewType, currentPage, directories);
+                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
                     break;
             }
         }
 
     }
 
-    public static void updateNavigationMenu(int viewType, int currentPage, File[] directories) {
+    public static void updateNavigationMenu(int viewType, int currentPage, File[] directories, String mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         String textViewType;
 
@@ -357,17 +366,41 @@ public class Main {
 
         System.out.println("\nPage " + currentPage + " of " + (directories.length + 4) / 5);
 
-        System.out.println("Input a subdirectory name to enter a subdirectory, '$' to create a file/folder in this directory, '!' to switch between viewing folders, files or both, " +
+        System.out.println("Input a subdirectory name to enter a subdirectory, '$' to " + mainOption + " a file/folder in this directory, '!' to switch between viewing folders, files or both, " +
                 "\n'^' to exit the current directory and '<','<<' and '>','>>' to navigate between pages.");
     }
 
     /*
     TODO
-        allow reading of text files, running of exes, etc
+        allow reading of text files (DONE), running of exes, etc
+        return to suboption after typing exit or something
      */
 
     public static void openFile(String fileName, boolean isAbsolute) {
+        String path = "";
+
+        if (!isAbsolute) {
+            path = defaultPath;
+        }
+
         System.out.println("reading file");
+
+        System.out.println("Printing the contents of: " + path + fileName + "\n");
+
+        try {
+            File textFile = new File(path + fileName);
+            Scanner reader = new Scanner(textFile);
+
+            while (reader.hasNextLine()) {
+                String line = reader.nextLine();
+                System.out.println(line);
+            }
+
+            System.out.println("\nEnd of file...");
+        } catch (FileNotFoundException e) {
+            System.out.println("an error occured when reading the file");
+            e.printStackTrace();
+        }
     }
     public static void modifyFile(String fileName, boolean isAbsolute) {
         System.out.println("modifying file");

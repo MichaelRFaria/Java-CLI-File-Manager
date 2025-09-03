@@ -130,6 +130,8 @@ public class Main {
                             break;
                         default:
                     }
+                } else {
+                    break;
                 }
 
             } catch (InputMismatchException e) {

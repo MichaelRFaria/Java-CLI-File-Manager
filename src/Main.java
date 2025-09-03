@@ -18,14 +18,14 @@ public class Main {
 
     /*
     TODO:
-        expand all of the below to include folders based on context (ie. files end with suffixes(.txt/.exe,etc), folders dont)
+        expand all of the below to include folders based on context (ie. files end with suffixes(.txt/.exe,etc), folders don't)
         implement default file path variable for creation (DONE), reading, modification, and deleting (create data folder)
         implement folder navigating (DONE)
         (above could lead to a file searching option)
             maybe allow user to configure how many files they would like displayed on the screen at a time
         implement input of absolute file path and relative file path (method to take input and check if its valid:
             file name (cant have several '.' illegal characters etc)
-            for absolute, file path must exist, maybe give the option to create folders if the directory doesnt exist?)
+            for absolute, file path must exist, maybe give the option to create folders if the directory doesn't exist?)
         implement exit option for each option and suboption
             change while loop condition to a boolean variable, then set boolean to true by default, and false when a switch-case or if-conditional triggers it
             after default and absolute, it should auto go back to suboption menu
@@ -110,7 +110,17 @@ public class Main {
                             createFile(fileName, isAbsolute);
                             break;
                         case "open":
-                            openFile(fileName, isAbsolute);
+                            boolean fileWasFound = openFile(fileName, isAbsolute);
+
+                            while (!fileWasFound) {
+                                if (isAbsolute) {
+                                    fileName = getAbsolutePathInput();
+                                } else {
+                                    fileName = getFileNameInput();
+                                }
+                                fileWasFound = openFile(fileName, isAbsolute);
+                            }
+
                             break;
                         case "modify":
                             modifyFile(fileName, isAbsolute);
@@ -134,6 +144,7 @@ public class Main {
     TODO
         implement actual name/path checking rules. scanner blocks on empty input, so cant if-else print an error in the while loops, for that
         but could still check for illegal characters etc
+        when opening/running files, this should say "Please input a valid file name" (should not say folder)
      */
     public static String getFileNameInput() {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
@@ -143,6 +154,8 @@ public class Main {
             String input = scanner.next();
             if (!input.isEmpty()) { // name checking rules go here
                 return input;
+            } else {
+                System.out.println("File name input is invalid. Please try again: ");
             }
         }
     }
@@ -156,6 +169,8 @@ public class Main {
             File temp = new File(input);
             if (temp.isAbsolute()) { // path checking rules go here
                 return input;
+            } else {
+                System.out.println("File path is entered incorrectly. Please try again: ");
             }
         }
     }
@@ -220,16 +235,18 @@ public class Main {
 
         updateNavigationMenu(viewType, currentPage, directories, mainOption);
 
+        String fileName;
+
         while (true) {
             String input = scanner.next();
 
             switch (input) {
-                // this should change depending on what you are doing (create/open/delete, etc)
+                // this should change depending on what you are doing (create/open/delete, etc.)
                 case "$":
                     switch (mainOption) {
                         case "create":
-                            String fileName1 = navigate + "\\" + getFileNameInput();
-                            createFile(fileName1, true);
+                            fileName = navigate + "\\" + getFileNameInput();
+                            createFile(fileName, true);
 
                             directories = navigate.listFiles(); // update files list with the newly created file
                             updateNavigationMenu(viewType, currentPage, directories, mainOption);
@@ -237,11 +254,16 @@ public class Main {
 
                             /*
                             TODO
-                                add navigation method of opening/running, modifying and deleting files/folders
+                                add navigation method of opening/running (done), modifying and deleting files/folders
                              */
                         case "open":
-                            String fileName2 = navigate + "\\" + getFileNameInput();
-                            openFile(fileName2, true);
+                            fileName = navigate + "\\" + getFileNameInput();
+                            boolean fileWasFound = openFile(fileName, true);
+
+                            while (!fileWasFound) {
+                                fileName = navigate + "\\" + getFileNameInput();
+                                fileWasFound = openFile(fileName, true);
+                            }
 
                             break;
                         case "modify":
@@ -249,6 +271,7 @@ public class Main {
                         case "delete":
                             break;
                     }
+                    break; // this causes navigation menu to close after action is completed
                 case "!":
                     currentPage = 1; // current page set to one to prevent empty pages from being displayed since filtering down the view changes the amount of pages.
                     viewType = (viewType + 1) % 3;
@@ -317,7 +340,7 @@ public class Main {
             int i = 0;
             File[] updatedDirectories = new File[directories.length];
 
-            // directories is already ordered alphabetically so all we need to do is add all the folders first, then files second to a new array.
+            // directories are already ordered alphabetically so all we need to do is add all the folders first, then files second to a new array.
             for (File file : directories) {
                 if (file.isDirectory()) {
                     updatedDirectories[i] = file;
@@ -368,6 +391,11 @@ public class Main {
 
         System.out.println("Input a subdirectory name to enter a subdirectory, '$' to " + mainOption + " a file/folder in this directory, '!' to switch between viewing folders, files or both, " +
                 "\n'^' to exit the current directory and '<','<<' and '>','>>' to navigate between pages.");
+
+        /*
+        TODO
+            when opening/running files,the above message should say "...'$' to " + mainOption + " a FILE in this directory..." (should not say folder)
+         */
     }
 
     /*
@@ -376,19 +404,30 @@ public class Main {
         return to suboption after typing exit or something
      */
 
-    public static void openFile(String fileName, boolean isAbsolute) {
+
+    public static boolean openFile(String fileName, boolean isAbsolute) { // returns true if file is found, and false if file is not found
         String path = "";
 
         if (!isAbsolute) {
             path = defaultPath;
         }
 
-        System.out.println("reading file");
+        System.out.println("trying to read file");
 
         System.out.println("Printing the contents of: " + path + fileName + "\n");
 
+        String fileExtension = fileName.substring(fileName.length() - 3);
+        System.out.println(fileExtension);
+        /*
+        * TODO
+        *   add way to open exes
+        *
+        *
+        * */
+
+        File textFile = new File(path + fileName);
+
         try {
-            File textFile = new File(path + fileName);
             Scanner reader = new Scanner(textFile);
 
             while (reader.hasNextLine()) {
@@ -397,9 +436,16 @@ public class Main {
             }
 
             System.out.println("\nEnd of file...");
-        } catch (FileNotFoundException e) {
-            System.out.println("an error occured when reading the file");
-            e.printStackTrace();
+            return true;
+        } catch (FileNotFoundException e) { // to be utilised in a loop
+            System.out.println("File was not found, please try again.");
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            return false;
+            //e.printStackTrace();
         }
     }
     public static void modifyFile(String fileName, boolean isAbsolute) {

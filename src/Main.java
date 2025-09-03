@@ -19,7 +19,7 @@ public class Main {
     /*
     TODO:
         expand all of the below to include folders based on context (ie. files end with suffixes(.txt/.exe,etc), folders don't)
-        implement default file path variable for creation (DONE), reading, modification, and deleting (create data folder)
+        implement default file path variable for creation (DONE), reading (DONE), modification, and deleting (create data folder)
         implement folder navigating (DONE)
         (above could lead to a file searching option)
             maybe allow user to configure how many files they would like displayed on the screen at a time
@@ -402,7 +402,7 @@ public class Main {
 
     /*
     TODO
-        allow reading of text files (DONE), running of exes, etc
+        allow reading of text files (DONE), running of exes (DONE), .bat? etc
         return to suboption after typing exit or something
      */
 
@@ -414,42 +414,56 @@ public class Main {
             path = defaultPath;
         }
 
-        System.out.println("trying to read file");
-
-        System.out.println("Printing the contents of: " + path + fileName + "\n");
+        //System.out.println("trying to read file");
 
         String fileExtension = fileName.substring(fileName.length() - 3);
-        System.out.println(fileExtension);
-        /*
-        * TODO
-        *   add way to open exes
-        *
-        *
-        * */
+        //System.out.println(fileExtension);
 
-        File textFile = new File(path + fileName);
 
-        try {
-            Scanner reader = new Scanner(textFile);
+        switch (fileExtension) {
+            case "txt":
+                try {
+                    File textFile = new File(path + fileName);
+                    Scanner reader = new Scanner(textFile);
 
-            while (reader.hasNextLine()) {
-                String line = reader.nextLine();
-                System.out.println(line);
-            }
+                    System.out.println("Printing the contents of: " + path + fileName + "\n");
+                    while (reader.hasNextLine()) {
+                        String line = reader.nextLine();
+                        System.out.println(line);
+                    }
 
-            System.out.println("\nEnd of file...");
-            return true;
-        } catch (FileNotFoundException e) { // to be utilised in a loop
-            System.out.println("File was not found, please try again.");
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-            return false;
-            //e.printStackTrace();
+                    System.out.println("\nEnd of file...");
+                    return true;
+                } catch (FileNotFoundException e) { // to be utilised in a loop
+                    System.out.println("File was not found, please try again.");
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    return false;
+                    //e.printStackTrace();
+                }
+            case "exe":
+                try {
+                    System.out.println(fileName);
+                    String dir = fileName.substring(0, fileName.lastIndexOf('\\'));
+                    // in the case of running through an absolute file path or the navigation menu, we need to find the working directory in order to execute our command
+                    Runtime.getRuntime().exec(fileName, null, new File(dir));
+                    System.out.println("Running the executable at:" + fileName);
+                    return true;
+                } catch (IOException e) {
+                    System.out.println("an error occurred when starting the .exe");
+                    e.printStackTrace();
+                    return false;
+                }
+            default:
+                break;
         }
+        System.out.println("File was not found, please try again.");
+        return false;
     }
+
     public static void modifyFile(String fileName, boolean isAbsolute) {
         System.out.println("modifying file");
     }

@@ -229,18 +229,21 @@ public class Main {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         File navigate = new File(defaultPath);
         File[] directories = navigate.listFiles();
+        String oldDirectoryPath;
 
         System.out.println(navigate.getAbsolutePath());
 
         int currentPage = 1;
         int viewType = 1; // 1 = both folders and files, 2 = folders, 3 = files
 
-        updateNavigationMenu(viewType, currentPage, directories, mainOption);
+        updateNavigationMenu(viewType, currentPage, directories, navigate.getAbsolutePath(), mainOption);
 
         String fileName;
 
         while (true) {
             String input = scanner.next();
+
+            oldDirectoryPath = navigate.getAbsolutePath();
 
             switch (input) {
                 // this should change depending on what you are doing (create/open/delete, etc.)
@@ -251,7 +254,7 @@ public class Main {
                             createFile(fileName, true);
 
                             directories = navigate.listFiles(); // update files list with the newly created file
-                            updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                            updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                             break;
 
                             /*
@@ -277,7 +280,7 @@ public class Main {
                 case "!":
                     currentPage = 1; // current page set to one to prevent empty pages from being displayed since filtering down the view changes the amount of pages.
                     viewType = (viewType + 1) % 3;
-                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;
                 case "^":
                     if (navigate.getParent() != null) {
@@ -287,33 +290,34 @@ public class Main {
                         System.out.println("There is no parent directory. Please pick another option");
                     }
                     currentPage = 1;
-                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;
                 case "<":
                     if (currentPage - 1 > 0) {
                         currentPage--;
                     }
-                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;
                 case "<<":
                     currentPage = 1;
-                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;
                 case ">":
                     if (currentPage < (directories.length + 4) / 5) {
                         currentPage++;
                     }
-                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;
                 case ">>":
                     if (currentPage < (directories.length + 4) / 5) {
                         currentPage = (directories.length + 4) / 5;
                     }
-                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;
                 default: // inputting a folder name
                     File temp = new File(navigate.getAbsolutePath() + "\\" + input);
                     if (temp.isDirectory()) { // checking if subdirectory with the inputted name exists.
+                        oldDirectoryPath = oldDirectoryPath + "\\" + input;
                         navigate = temp;
                         directories = temp.listFiles(); // updating file list with the files in the parent directory.
                         currentPage = 1;
@@ -325,14 +329,14 @@ public class Main {
                             throw new RuntimeException(e);
                         }
                     }
-                    updateNavigationMenu(viewType, currentPage, directories, mainOption);
+                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;
             }
         }
 
     }
 
-    public static void updateNavigationMenu(int viewType, int currentPage, File[] directories, String mainOption) {
+    public static void updateNavigationMenu(int viewType, int currentPage, File[] directories, String oldDirectoryPath, String mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         String textViewType;
 
@@ -379,8 +383,19 @@ public class Main {
 
         }
 
+    /* todo needs to be able to state the file path of empty folders
+        if directory has files but not folders, vice versa, then this will be a problem
+        if directory has neither files or folders, this will be a problem
+     */
+        String directoryPath;
 
-        System.out.println("Currently viewing the " + textViewType + " of: " + directories[0].getParent() + "\n");
+        if (directories.length != 0) {
+            directoryPath = directories[0].getParent();
+        } else {
+            directoryPath = oldDirectoryPath;
+        }
+
+        System.out.println("Currently viewing the " + textViewType + " of: " + directoryPath + "\n");
 
         int i = (currentPage - 1) * 5;
 
@@ -389,7 +404,18 @@ public class Main {
             i++;
         }
 
-        System.out.println("\nPage " + currentPage + " of " + (directories.length + 4) / 5);
+        int pageCount;
+
+        if (directories.length == 0) {
+            System.out.println("The current directory is empty!");
+            pageCount = 1;
+        } else {
+            pageCount = (directories.length + 4) / 5;
+        }
+
+
+
+        System.out.println("\nPage " + currentPage + " of " + pageCount);
 
         System.out.println("Input a subdirectory name to enter a subdirectory, '$' to " + mainOption + " a file/folder in this directory, '!' to switch between viewing folders, files or both, " +
                 "\n'^' to exit the current directory and '<','<<' and '>','>>' to navigate between pages.");
@@ -419,7 +445,6 @@ public class Main {
         String fileExtension = fileName.substring(fileName.length() - 3);
         //System.out.println(fileExtension);
 
-
         switch (fileExtension) {
             case "txt":
                 try {
@@ -433,6 +458,10 @@ public class Main {
                     }
 
                     System.out.println("\nEnd of file...");
+
+                    System.out.println("\nPress enter to return close the text file");
+                    scanner.next();
+
                     return true;
                 } catch (FileNotFoundException e) { // to be utilised in a loop
                     System.out.println("File was not found, please try again.");

@@ -1,7 +1,3 @@
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.io.File;
@@ -18,18 +14,11 @@ public class Main {
 
     /*
     TODO:
-        expand all of the below to include folders based on context (ie. files end with suffixes(.txt/.exe,etc), folders don't)
-        implement default file path variable for creation (DONE), reading (DONE), modification, and deleting (create data folder)
-        implement folder navigating (DONE)
-        (above could lead to a file searching option)
+        (file search option?)
             maybe allow user to configure how many files they would like displayed on the screen at a time
-        implement input of absolute file path and relative file path (method to take input and check if its valid:
-            file name (cant have several '.' illegal characters etc)
-            for absolute, file path must exist, maybe give the option to create folders if the directory doesn't exist?)
         implement exit option for each option and suboption
             change while loop condition to a boolean variable, then set boolean to true by default, and false when a switch-case or if-conditional triggers it
             after default and absolute, it should auto go back to suboption menu
-
     */
 
 
@@ -87,14 +76,14 @@ public class Main {
                 int num = scanner.nextInt();
                 switch (num) {
                     case 1:
-                        fileName = getFileNameInput();
+                        fileName = UserInput.getFileNameInput();
                         break;
                     case 2:
-                        fileName = getAbsolutePathInput();
+                        fileName = UserInput.getAbsolutePathInput();
                         isAbsolute = true;
                         break;
                     case 3:
-                        navigateDirs(mainOption);
+                        DirectoryNavigator.navigateDirs(mainOption);
                         break;
                     case 0:
                         reprintMainMenuOptions();
@@ -107,26 +96,26 @@ public class Main {
                 if (fileName != null) { // fileName will be null if you choose to exit from the submenu, in that case we should not (and cannot) execute any of these.
                     switch (mainOption) {
                         case "create":
-                            createFile(fileName, isAbsolute);
+                            Create.createFile(fileName, isAbsolute);
                             break;
                         case "open":
-                            boolean fileWasFound = openFile(fileName, isAbsolute);
+                            boolean fileWasFound = Open.openFile(fileName, isAbsolute);
 
                             while (!fileWasFound) {
                                 if (isAbsolute) {
-                                    fileName = getAbsolutePathInput();
+                                    fileName = UserInput.getAbsolutePathInput();
                                 } else {
-                                    fileName = getFileNameInput();
+                                    fileName = UserInput.getFileNameInput();
                                 }
-                                fileWasFound = openFile(fileName, isAbsolute);
+                                fileWasFound = Open.openFile(fileName, isAbsolute);
                             }
 
                             break;
                         case "modify":
-                            modifyFile(fileName, isAbsolute);
+                            Modify.modifyFile(fileName, isAbsolute);
                             break;
                         case "delete":
-                            deleteFile(fileName, isAbsolute);
+                            Delete.deleteFile(fileName, isAbsolute);
                             break;
                         default:
                     }
@@ -141,370 +130,19 @@ public class Main {
         }
     }
 
-    // both methods below can be merged into one, but it will lead to nested if-statements within the loop, and a param
-    /*
-    TODO
-        implement actual name/path checking rules. scanner blocks on empty input, so cant if-else print an error in the while loops, for that
-        but could still check for illegal characters etc
-        when opening/running files, this should say "Please input a valid file name" (should not say folder)
-     */
-    public static String getFileNameInput() {
-        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Please input a valid file/folder name: ");
-
-        while (true) {
-            String input = scanner.next();
-            if (!input.isEmpty()) { // name checking rules go here
-                return input;
-            } else {
-                System.out.println("File name input is invalid. Please try again: ");
-            }
-        }
-    }
-
-    public static String getAbsolutePathInput() {
-        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Please input a valid absolute path: ");
-
-        while (true) {
-            String input = scanner.next();
-            File temp = new File(input);
-            if (temp.isAbsolute()) { // path checking rules go here
-                return input;
-            } else {
-                System.out.println("File path is entered incorrectly. Please try again: ");
-            }
-        }
-    }
-
-    /*
-    TODO
-        when creating a file in default/absolute go back to sub menu after a few seconds
-     */
-
-    public static void createFile(String fileName, boolean isAbsolute) {
-        String path = "";
-
-        if (!isAbsolute) {
-            path = defaultPath;
-        }
-
-        System.out.println("creating file/folder");
-
-        try {
-            boolean created;
-            File file = new File(path + fileName);
-
-            if ((path + fileName).indexOf('.') == -1) { // if there is no '.' then we must be creating a folder
-                created = file.mkdir();
-            } else { // if there is a ',' then we must be creating a file
-                created = file.createNewFile();
-            }
-
-            // printing success/error message
-            if (created) {
-                System.out.println("successfully created " + file.getName());
-            } else {
-                System.out.println(file.getName() + " already exists");
-            }
-
-            // ensuring there is enough time for the above message to be read
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                System.out.println("An error occurred:");
-                System.out.println(e.getMessage()+"\n");
-                e.printStackTrace();
-            }
-
-        } catch (IOException e) {
-            System.out.println("An error occurred:");
-            System.out.println(e.getMessage()+"\n");
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void navigateDirs(String mainOption) { // sort by alphabetical, folders first, files second.
-        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        File navigate = new File(defaultPath);
-        File[] directories = navigate.listFiles();
-        String oldDirectoryPath;
-
-        System.out.println(navigate.getAbsolutePath());
-
-        int currentPage = 1;
-        int viewType = 1; // 1 = both folders and files, 2 = folders, 3 = files
-
-        updateNavigationMenu(viewType, currentPage, directories, navigate.getAbsolutePath(), mainOption);
-
-        String fileName;
-
-        while (true) {
-            String input = scanner.next();
-
-            oldDirectoryPath = navigate.getAbsolutePath();
-
-            switch (input) {
-                // this should change depending on what you are doing (create/open/delete, etc.)
-                case "$":
-                    switch (mainOption) {
-                        case "create":
-                            fileName = navigate + "\\" + getFileNameInput();
-                            createFile(fileName, true);
-
-                            directories = navigate.listFiles(); // update files list with the newly created file
-                            updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                            break;
-
-                            /*
-                            TODO
-                                add navigation method of opening/running (done), modifying and deleting files/folders
-                             */
-                        case "open":
-                            fileName = navigate + "\\" + getFileNameInput();
-                            boolean fileWasFound = openFile(fileName, true);
-
-                            while (!fileWasFound) {
-                                fileName = navigate + "\\" + getFileNameInput();
-                                fileWasFound = openFile(fileName, true);
-                            }
-
-                            break;
-                        case "modify":
-                            break;
-                        case "delete":
-                            break;
-                    }
-                    break; // this causes navigation menu to close after action is completed
-                case "!":
-                    currentPage = 1; // current page set to one to prevent empty pages from being displayed since filtering down the view changes the amount of pages.
-                    viewType = (viewType + 1) % 3;
-                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                    break;
-                case "^":
-                    if (navigate.getParent() != null) {
-                        navigate = navigate.getParentFile();
-                        directories = navigate.listFiles();
-                    } else {
-                        System.out.println("There is no parent directory. Please pick another option");
-                    }
-                    currentPage = 1;
-                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                    break;
-                case "<":
-                    if (currentPage - 1 > 0) {
-                        currentPage--;
-                    }
-                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                    break;
-                case "<<":
-                    currentPage = 1;
-                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                    break;
-                case ">":
-                    if (currentPage < (directories.length + 4) / 5) {
-                        currentPage++;
-                    }
-                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                    break;
-                case ">>":
-                    if (currentPage < (directories.length + 4) / 5) {
-                        currentPage = (directories.length + 4) / 5;
-                    }
-                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                    break;
-                default: // inputting a folder name
-                    File temp = new File(navigate.getAbsolutePath() + "\\" + input);
-                    if (temp.isDirectory()) { // checking if subdirectory with the inputted name exists.
-                        oldDirectoryPath = oldDirectoryPath + "\\" + input;
-                        navigate = temp;
-                        directories = temp.listFiles(); // updating file list with the files in the parent directory.
-                        currentPage = 1;
-                    } else {
-                        System.out.println("There is no subdirectory with the inputted name. Please try again");
-                        try {
-                            Thread.sleep(1500); // thread to ensure error message displays on screen momentarily before console clears.
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
-                    break;
-            }
-        }
-
-    }
-
-    public static void updateNavigationMenu(int viewType, int currentPage, File[] directories, String oldDirectoryPath, String mainOption) {
-        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        String textViewType;
-
-        // filtering to display only files, folders, or both.
-        if (viewType == 1) { // sorting so folders are shown before files
-            textViewType = "the folders and files";
-            int i = 0;
-            File[] updatedDirectories = new File[directories.length];
-
-            // directories are already ordered alphabetically so all we need to do is add all the folders first, then files second to a new array.
-            for (File file : directories) {
-                if (file.isDirectory()) {
-                    updatedDirectories[i] = file;
-                    i++;
-                }
-            }
-
-            for (File file : directories) {
-                if (file.isFile()) {
-                    updatedDirectories[i] = file;
-                    i++;
-                }
-            }
-
-            directories = updatedDirectories;
-        } else {
-            ArrayList<File> updatedDirectories = new ArrayList<>(Arrays.asList(directories)); // converting array into arraylist so that files can be removed
-            if (viewType == 2) {
-                textViewType = "the folders";
-                updatedDirectories.removeIf(File::isFile); // generated by IDE simplified version of commented loop below
-            } else {
-                textViewType = "the files";
-                updatedDirectories.removeIf(File::isDirectory); // generated by IDE, simplified version of commented loop below
-            }
-            directories = updatedDirectories.toArray(new File[0]); // converting back to array to assign to directories variable
-
-            /*
-            for (File file : updatedDirectories) {
-                if (file.isDirectory()) {
-                    updatedDirectories.remove(file);
-                }
-            }
-            */
-
-        }
-
-    /* todo needs to be able to state the file path of empty folders
-        if directory has files but not folders, vice versa, then this will be a problem
-        if directory has neither files or folders, this will be a problem
-     */
-        String directoryPath;
-
-        if (directories.length != 0) {
-            directoryPath = directories[0].getParent();
-        } else {
-            directoryPath = oldDirectoryPath;
-        }
-
-        System.out.println("Currently viewing the " + textViewType + " of: " + directoryPath + "\n");
-
-        int i = (currentPage - 1) * 5;
-
-        while (i < (currentPage * 5) && i < directories.length) {
-            System.out.println(directories[i].getName());
-            i++;
-        }
-
-        int pageCount;
-
-        if (directories.length == 0) {
-            System.out.println("The current directory is empty!");
-            pageCount = 1;
-        } else {
-            pageCount = (directories.length + 4) / 5;
-        }
-
-
-
-        System.out.println("\nPage " + currentPage + " of " + pageCount);
-
-        System.out.println("Input a subdirectory name to enter a subdirectory, '$' to " + mainOption + " a file/folder in this directory, '!' to switch between viewing folders, files or both, " +
-                "\n'^' to exit the current directory and '<','<<' and '>','>>' to navigate between pages.");
-
-        /*
-        TODO
-            when opening/running files,the above message should say "...'$' to " + mainOption + " a FILE in this directory..." (should not say folder)
-         */
-    }
-
-    /*
-    TODO
-        allow reading of text files (DONE), running of exes (DONE), .bat? etc
-        return to suboption after typing exit or something
-     */
-
-
-    public static boolean openFile(String fileName, boolean isAbsolute) { // returns true if file is found, and false if file is not found
-        String path = "";
-
-        if (!isAbsolute) {
-            path = defaultPath;
-        }
-
-        //System.out.println("trying to read file");
-
-        String fileExtension = fileName.substring(fileName.length() - 3);
-        //System.out.println(fileExtension);
-
-        switch (fileExtension) {
-            case "txt":
-                try {
-                    File textFile = new File(path + fileName);
-                    Scanner reader = new Scanner(textFile);
-
-                    System.out.println("Printing the contents of: " + path + fileName + "\n");
-                    while (reader.hasNextLine()) {
-                        String line = reader.nextLine();
-                        System.out.println(line);
-                    }
-
-                    System.out.println("\nEnd of file...");
-
-                    System.out.println("\nPress enter to return close the text file");
-                    scanner.next();
-
-                    return true;
-                } catch (FileNotFoundException e) { // to be utilised in a loop
-                    System.out.println("File was not found, please try again.");
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    return false;
-                    //e.printStackTrace();
-                }
-            case "exe":
-                try {
-                    System.out.println(fileName);
-                    String dir = fileName.substring(0, fileName.lastIndexOf('\\'));
-                    // in the case of running through an absolute file path or the navigation menu, we need to find the working directory in order to execute our command
-                    Runtime.getRuntime().exec(fileName, null, new File(dir));
-                    System.out.println("Running the executable at:" + fileName);
-                    return true;
-                } catch (IOException e) {
-                    System.out.println("an error occurred when starting the .exe");
-                    e.printStackTrace();
-                    return false;
-                }
-            default:
-                break;
-        }
-        System.out.println("File was not found, please try again.");
-        return false;
-    }
-
-    public static void modifyFile(String fileName, boolean isAbsolute) {
-        System.out.println("modifying file");
-    }
-    public static void deleteFile(String fileName, boolean isAbsolute) {
-        System.out.println("deleting file");
-    }
-
     public static void reprintMainMenuOptions() {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         for (int i = 3; i < mainMenuText.length; i++) {
             System.out.println(mainMenuText[i]);
         }
+    }
+    
+    public static String getDefaultPath() {
+        return defaultPath;
+    }
+
+    public static Scanner getScanner() {
+        return scanner;
     }
 }

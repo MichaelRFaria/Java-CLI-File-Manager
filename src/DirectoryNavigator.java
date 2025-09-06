@@ -38,28 +38,22 @@ public class DirectoryNavigator {
 
                             /*
                             TODO
-                                add navigation method of opening/running (done), modifying and deleting files/folders
+                                replicate Main.execOptionUntilSuccessful, easier to create a new method but could try change the previous method
                              */
                         case "open":
-                            fileName = navigate + "\\" + UserInput.getFileNameInput();
-                            fileWasFound = Open.openFile(fileName, true);
-
-                            while (!fileWasFound) {
+                            do {
                                 fileName = navigate + "\\" + UserInput.getFileNameInput();
                                 fileWasFound = Open.openFile(fileName, true);
-                            }
+                            } while (!fileWasFound);
 
                             break;
                         case "modify":
                             break;
                         case "delete":
-                            fileName = navigate + "\\" + UserInput.getFileNameInput();
-                            fileWasFound = Delete.deleteFile(fileName, true);
-
-                            while (!fileWasFound) {
+                            do {
                                 fileName = navigate + "\\" + UserInput.getFileNameInput();
                                 fileWasFound = Delete.deleteFile(fileName, true);
-                            }
+                            } while (!fileWasFound);
                             break;
                     }
                     break; // this causes navigation menu to close after action is completed

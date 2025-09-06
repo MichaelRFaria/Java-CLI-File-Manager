@@ -1,4 +1,3 @@
-import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
@@ -64,7 +63,6 @@ public class Main {
     public static void subOptionMenu(String mainOption) {
         String fileName = null;
         boolean isAbsolute = false;
-        boolean fileWasFound;
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Please input one of the following: ");
@@ -120,6 +118,10 @@ public class Main {
     }
 
     public static void execOptionUntilSuccessful(String fileName, boolean isAbsolute, String mainOption) {
+        /*
+        this map allows the appropriate method to be called based on the param mainOption,
+        alternatively you could use a switch case statement, but you would need two switch cases which would be ugly and stupid and boring
+         */
         Map <String, BiFunction<String, Boolean, Boolean>> optionToExec = Map.of(
                 "open", Open::openFile,
                 "modify", Modify::modifyFile,

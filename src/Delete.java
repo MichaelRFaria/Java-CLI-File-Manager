@@ -1,6 +1,4 @@
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class Delete {
 
@@ -32,11 +30,7 @@ public class Delete {
             e.printStackTrace();
         }
 
-        if (deleted) {
-            return true;
-        } else {
-            return false;
-        }
+        return deleted;
 
     }
 }

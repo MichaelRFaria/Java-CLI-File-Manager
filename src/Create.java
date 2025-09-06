@@ -8,7 +8,7 @@ public class Create {
         when creating a file in default/absolute go back to sub menu after a few seconds
      */
 
-    public static void createFile(String fileName, boolean isAbsolute) {
+    public static boolean createFile(String fileName, boolean isAbsolute) {
         String path = "";
 
         if (!isAbsolute) {
@@ -43,10 +43,17 @@ public class Create {
                 e.printStackTrace();
             }
 
+            if (created) {
+                return true;
+            } else {
+                return false;
+            }
+
         } catch (IOException e) {
             System.out.println("An error occurred:");
             System.out.println(e.getMessage()+"\n");
             e.printStackTrace();
+            return false;
         }
     }
 }

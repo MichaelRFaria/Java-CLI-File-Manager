@@ -1,6 +1,9 @@
+import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Map;
 import java.util.Scanner;
 import java.io.File;
+import java.util.function.BiFunction;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -10,7 +13,6 @@ public class Main {
             "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
             "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to delete an existing file/folder",
             "Input '0' if you would like to exit\n", "Please input an option: "};
-
 
     /*
     TODO:
@@ -100,40 +102,11 @@ public class Main {
                             Create.createFile(fileName, isAbsolute);
                             break;
 
-                            /*
-                                TODO
-                                    make the file found checker a method and execute specific methods based on "mainOption" param
-                             */
-                        case "open":
-                            fileWasFound = Open.openFile(fileName, isAbsolute);
-
-                            while (!fileWasFound) {
-                                if (isAbsolute) {
-                                    fileName = UserInput.getAbsolutePathInput();
-                                } else {
-                                    fileName = UserInput.getFileNameInput();
-                                }
-                                fileWasFound = Open.openFile(fileName, isAbsolute);
-                            }
-
-                            break;
-                        case "modify":
-                            Modify.modifyFile(fileName, isAbsolute);
-                            break;
-                        case "delete":
-                            fileWasFound = Delete.deleteFile(fileName, isAbsolute);
-
-                            while (!fileWasFound) {
-                                if (isAbsolute) {
-                                    fileName = UserInput.getAbsolutePathInput();
-                                } else {
-                                    fileName = UserInput.getFileNameInput();
-                                }
-                                fileWasFound = Delete.deleteFile(fileName, isAbsolute);
-                            }
-
+                        case "open", "modify", "delete":
+                            execOptionUntilSuccessful(fileName, isAbsolute, mainOption);
                             break;
                         default:
+                            throw new IllegalStateException("Unexpected value: " + mainOption);
                     }
                 } else {
                     break;
@@ -144,6 +117,28 @@ public class Main {
                 scanner.next();
             }
         }
+    }
+
+    public static void execOptionUntilSuccessful(String fileName, boolean isAbsolute, String mainOption) {
+        Map <String, BiFunction<String, Boolean, Boolean>> optionToExec = Map.of(
+                "open", Open::openFile,
+                "modify", Modify::modifyFile,
+                "delete", Delete::deleteFile
+        );
+
+        BiFunction<String, Boolean, Boolean> method = optionToExec.get(mainOption);
+
+        boolean fileWasFound = method.apply(fileName, isAbsolute);
+
+        while (!fileWasFound) {
+            if (isAbsolute) {
+                fileName = UserInput.getAbsolutePathInput();
+            } else {
+                fileName = UserInput.getFileNameInput();
+            }
+            fileWasFound = method.apply(fileName, isAbsolute);
+        }
+
     }
 
     public static void reprintMainMenuOptions() {

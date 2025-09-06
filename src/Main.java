@@ -62,6 +62,7 @@ public class Main {
     public static void subOptionMenu(String mainOption) {
         String fileName = null;
         boolean isAbsolute = false;
+        boolean fileWasFound;
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Please input one of the following: ");
@@ -98,8 +99,13 @@ public class Main {
                         case "create":
                             Create.createFile(fileName, isAbsolute);
                             break;
+
+                            /*
+                                TODO
+                                    make the file found checker a method and execute specific methods based on "mainOption" param
+                             */
                         case "open":
-                            boolean fileWasFound = Open.openFile(fileName, isAbsolute);
+                            fileWasFound = Open.openFile(fileName, isAbsolute);
 
                             while (!fileWasFound) {
                                 if (isAbsolute) {
@@ -115,7 +121,17 @@ public class Main {
                             Modify.modifyFile(fileName, isAbsolute);
                             break;
                         case "delete":
-                            Delete.deleteFile(fileName, isAbsolute);
+                            fileWasFound = Delete.deleteFile(fileName, isAbsolute);
+
+                            while (!fileWasFound) {
+                                if (isAbsolute) {
+                                    fileName = UserInput.getAbsolutePathInput();
+                                } else {
+                                    fileName = UserInput.getFileNameInput();
+                                }
+                                fileWasFound = Delete.deleteFile(fileName, isAbsolute);
+                            }
+
                             break;
                         default:
                     }

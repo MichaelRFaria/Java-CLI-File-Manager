@@ -17,6 +17,7 @@ public class DirectoryNavigator {
         updateNavigationMenu(viewType, currentPage, directories, navigate.getAbsolutePath(), mainOption);
 
         String fileName;
+        boolean fileWasFound;
 
         while (true) {
             String input = Main.getScanner().next();
@@ -41,7 +42,7 @@ public class DirectoryNavigator {
                              */
                         case "open":
                             fileName = navigate + "\\" + UserInput.getFileNameInput();
-                            boolean fileWasFound = Open.openFile(fileName, true);
+                            fileWasFound = Open.openFile(fileName, true);
 
                             while (!fileWasFound) {
                                 fileName = navigate + "\\" + UserInput.getFileNameInput();
@@ -52,6 +53,13 @@ public class DirectoryNavigator {
                         case "modify":
                             break;
                         case "delete":
+                            fileName = navigate + "\\" + UserInput.getFileNameInput();
+                            fileWasFound = Delete.deleteFile(fileName, true);
+
+                            while (!fileWasFound) {
+                                fileName = navigate + "\\" + UserInput.getFileNameInput();
+                                fileWasFound = Delete.deleteFile(fileName, true);
+                            }
                             break;
                     }
                     break; // this causes navigation menu to close after action is completed

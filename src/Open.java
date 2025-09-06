@@ -39,6 +39,7 @@ public class Open {
 
                     System.out.println("\nPress enter to return close the text file");
                     Main.getScanner().next();
+                    // doesnt actually close file right now, but can either "close" file by using the cmd clear technique or by reprinting menu options in loop of the method call
 
                     return true;
                 } catch (FileNotFoundException e) { // to be utilised in a loop

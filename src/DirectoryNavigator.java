@@ -17,7 +17,6 @@ public class DirectoryNavigator {
         updateNavigationMenu(viewType, currentPage, directories, navigate.getAbsolutePath(), mainOption);
 
         String fileName;
-        boolean fileWasFound;
 
         while (true) {
             String input = Main.getScanner().next();
@@ -40,21 +39,8 @@ public class DirectoryNavigator {
                             TODO
                                 replicate Main.execOptionUntilSuccessful, easier to create a new method but could try change the previous method
                              */
-                        case "open":
-                            do {
-                                fileName = navigate + "\\" + UserInput.getFileNameInput();
-                                fileWasFound = Open.openFile(fileName, true);
-                            } while (!fileWasFound);
-
-                            break;
-                        case "modify":
-                            break;
-                        case "delete":
-                            do {
-                                fileName = navigate + "\\" + UserInput.getFileNameInput();
-                                fileWasFound = Delete.deleteFile(fileName, true);
-                            } while (!fileWasFound);
-                            break;
+                        case "open","modify","delete":
+                            Main.execOptionUntilSuccessful(false, mainOption, navigate + "\\");
                     }
                     break; // this causes navigation menu to close after action is completed
                 case "!":

@@ -61,7 +61,7 @@ public class Main {
     }
 
     public static void subOptionMenu(String mainOption) {
-        String fileName = null;
+        String fileName;
         boolean isAbsolute = false;
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
@@ -77,10 +77,8 @@ public class Main {
                 int num = scanner.nextInt();
                 switch (num) {
                     case 1:
-                        fileName = UserInput.getFileNameInput();
                         break;
                     case 2:
-                        fileName = UserInput.getAbsolutePathInput();
                         isAbsolute = true;
                         break;
                     case 3:
@@ -94,21 +92,23 @@ public class Main {
                         continue;
                 }
 
-                if (fileName != null) { // fileName will be null if you choose to exit from the submenu, in that case we should not (and cannot) execute any of these.
-                    switch (mainOption) {
-                        case "create":
-                            Create.createFile(fileName, isAbsolute);
-                            break;
+                switch (mainOption) {
+                    case "create":
+                        if (isAbsolute) {
+                            fileName = UserInput.getAbsolutePathInput();
+                        } else {
+                            fileName = UserInput.getFileNameInput();
+                        }
+                        Create.createFile(fileName, isAbsolute);
+                        break;
 
-                        case "open", "modify", "delete":
-                            execOptionUntilSuccessful(fileName, isAbsolute, mainOption);
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + mainOption);
-                    }
-                } else {
-                    break;
+                    case "open", "modify", "delete":
+                        execOptionUntilSuccessful(isAbsolute, mainOption, null);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + mainOption);
                 }
+
 
             } catch (InputMismatchException e) {
                 System.out.println("Please input a valid option, try again: ");
@@ -117,7 +117,7 @@ public class Main {
         }
     }
 
-    public static void execOptionUntilSuccessful(String fileName, boolean isAbsolute, String mainOption) {
+    public static void execOptionUntilSuccessful(boolean isAbsolute, String mainOption, String currNavDir) {
         /*
         this map allows the appropriate method to be called based on the param mainOption,
         alternatively you could use a switch case statement, but you would need two switch cases which would be ugly and stupid and boring
@@ -130,16 +130,22 @@ public class Main {
 
         BiFunction<String, Boolean, Boolean> method = optionToExec.get(mainOption);
 
-        boolean fileWasFound = method.apply(fileName, isAbsolute);
+        //System.out.println(Thread.currentThread().getStackTrace()[2].getClassName());
 
-        while (!fileWasFound) {
+        boolean fileWasFound;
+
+        do {
+            String fileName = "";
+            if (currNavDir != null) {
+                fileName += currNavDir;
+            }
             if (isAbsolute) {
                 fileName = UserInput.getAbsolutePathInput();
             } else {
                 fileName = UserInput.getFileNameInput();
             }
             fileWasFound = method.apply(fileName, isAbsolute);
-        }
+        } while (!fileWasFound);
 
     }
 

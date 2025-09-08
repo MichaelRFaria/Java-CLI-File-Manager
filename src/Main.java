@@ -63,6 +63,7 @@ public class Main {
     public static void subOptionMenu(String mainOption) {
         String fileName;
         boolean isAbsolute = false;
+        boolean exited = false;
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Please input one of the following: ");
@@ -72,7 +73,7 @@ public class Main {
         System.out.println("Input '0' if you would like to exit\n");
         System.out.println("Please input an option: ");
 
-        while (true) {
+        while (!exited) {
             try {
                 int num = scanner.nextInt();
                 switch (num) {
@@ -86,27 +87,30 @@ public class Main {
                         break;
                     case 0:
                         reprintMainMenuOptions();
+                        exited = true;
                         break;
                     default:
                         System.out.println("Please input an option from the list above, try again: ");
                         continue;
                 }
 
-                switch (mainOption) {
-                    case "create":
-                        if (isAbsolute) {
-                            fileName = UserInput.getAbsolutePathInput();
-                        } else {
-                            fileName = UserInput.getFileNameInput();
-                        }
-                        Create.createFile(fileName, isAbsolute);
-                        break;
+                if (!exited) {
+                    switch (mainOption) {
+                        case "create":
+                            if (isAbsolute) {
+                                fileName = UserInput.getAbsolutePathInput();
+                            } else {
+                                fileName = UserInput.getFileNameInput();
+                            }
+                            Create.createFile(fileName, isAbsolute);
+                            break;
 
-                    case "open", "modify", "delete":
-                        execOptionUntilSuccessful(isAbsolute, mainOption, null);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + mainOption);
+                        case "open", "modify", "delete":
+                            execOptionUntilSuccessful(isAbsolute, mainOption, null);
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + mainOption);
+                    }
                 }
 
 

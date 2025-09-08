@@ -18,10 +18,11 @@ public class Open {
             path = Main.getDefaultPath();
         }
 
-        //System.out.println("trying to read file");
-
-        String fileExtension = fileName.substring(fileName.length() - 3);
-        //System.out.println(fileExtension);
+        String fileExtension = "invalid";
+        int posOfDot = fileName.indexOf('.');
+        if (posOfDot != -1) {
+            fileExtension = fileName.substring(posOfDot + 1);
+        }
 
         switch (fileExtension) {
             case "txt":
@@ -42,7 +43,7 @@ public class Open {
                     // doesn't actually close file right now, but can either "close" file by using the cmd clear technique or by reprinting menu options in loop of the method call
 
                     return true;
-                } catch (FileNotFoundException e) { // to be utilised in a loop
+                } catch (FileNotFoundException e) {
                     System.out.println("File was not found, please try again.");
                     try {
                         Thread.sleep(1500);
@@ -50,7 +51,6 @@ public class Open {
                         throw new RuntimeException(ex);
                     }
                     return false;
-                    //e.printStackTrace();
                 }
             case "exe":
                 try {

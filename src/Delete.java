@@ -9,10 +9,19 @@ public class Delete {
             path = Main.getDefaultPath();
         }
 
+        File file = new File(path + fileName);
+        if (!file.exists()) {
+            System.out.println("File was not found, please try again.");
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            return false;
+        }
+
         System.out.println("deleting file");
 
-
-        File file = new File(path + fileName);
         boolean deleted = file.delete();
 
         if (deleted) {
@@ -31,6 +40,5 @@ public class Delete {
         }
 
         return deleted;
-
     }
 }

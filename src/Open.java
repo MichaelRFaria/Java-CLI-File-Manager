@@ -18,6 +18,17 @@ public class Open {
             path = Main.getDefaultPath();
         }
 
+        File file = new File(path + fileName);
+        if (!file.exists()) {
+            System.out.println("File was not found, please try again.");
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            return false;
+        }
+
         String fileExtension = "invalid";
         int posOfDot = fileName.indexOf('.');
         if (posOfDot != -1) {
@@ -27,8 +38,7 @@ public class Open {
         switch (fileExtension) {
             case "txt":
                 try {
-                    File textFile = new File(path + fileName);
-                    Scanner reader = new Scanner(textFile);
+                    Scanner reader = new Scanner(file);
 
                     System.out.println("Printing the contents of: " + path + fileName + "\n");
                     while (reader.hasNextLine()) {
@@ -67,12 +77,6 @@ public class Open {
                 }
             default:
                 break;
-        }
-        System.out.println("File was not found, please try again.");
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
         }
         return false;
     }

@@ -13,14 +13,25 @@ public class Modify {
         String path = "";
         String message;
 
-        message = fileName.indexOf('.') != -1 ? "file" : "folder";
-
-        if (isAbsolute) {
-            System.out.println("Now modifying the " + message + " at: " + fileName + "\n");
-        } else {
-            System.out.println("Now modifying the " + message + ": " + fileName + "\n");
+        if (!isAbsolute) {
             path = Main.getDefaultPath();
         }
+
+
+        message = fileName.indexOf('.') != -1 ? "file" : "folder";
+
+        File file = new File(path + fileName);
+        if (!file.exists()) {
+            System.out.println(message + " was not found, please try again.");
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            return false;
+        }
+
+        System.out.println("Now modifying the " + message + ": " + fileName + "\n");
 
         System.out.println("Please input one of the following: ");
         System.out.println("Input '1' if you would like to rename this file");
@@ -64,11 +75,10 @@ public class Modify {
                         boolean successful = false;
 
                         if (fileExtension.equals("folder") == newFileExtension.equals("folder")) { // either we are renaming a folder to a folder, or renaming a file to a file
-                            File oldFile = new File(fileName);
                             //System.out.println(oldFile.getAbsolutePath());
                             File newFile = new File(newFileName);
                             //System.out.println(newFile.getAbsolutePath());
-                            successful = oldFile.renameTo(newFile);
+                            successful = file.renameTo(newFile);
                             //System.out.println(test);
                         }
 

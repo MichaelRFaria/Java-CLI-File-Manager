@@ -6,6 +6,7 @@ public class Modify {
         editing text files
         moving files
      */
+
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
@@ -42,6 +43,11 @@ public class Modify {
                     fileName = path + fileName;
 
                     // need to implement isAbsolute checking
+                    if (isAbsolute) {
+                        int posOfSlash = fileName.lastIndexOf('\\');
+                        path = fileName.substring(0, posOfSlash + 1);
+                    }
+
                     String newFileName = path + UserInput.getFileNameInput();
 
                     String newFileExtension = "folder";

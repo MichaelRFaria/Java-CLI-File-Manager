@@ -12,11 +12,8 @@ public class Modify {
 
         String path = "";
         String message;
-        if (fileName.indexOf('.') != -1) {
-            message = "file";
-        } else {
-            message = "folder";
-        }
+
+        message = fileName.indexOf('.') != -1 ? "file" : "folder";
 
         if (isAbsolute) {
             System.out.println("Now modifying the " + message + " at: " + fileName + "\n");
@@ -32,6 +29,7 @@ public class Modify {
         while (true) {
             String input = Main.getScanner().next();
 
+            // need a way to exit from these options like typing something special "~", etc
             switch (input) {
                 case "1":
                     String fileExtension = "folder";
@@ -48,29 +46,45 @@ public class Modify {
                         path = fileName.substring(0, posOfSlash + 1);
                     }
 
-                    String newFileName = path + UserInput.getFileNameInput();
+                    while (true) { // breaks when renaming is successful, where it will return true.
 
-                    String newFileExtension = "folder";
-                    posOfDot = newFileName.indexOf('.');
-                    if (posOfDot != -1) {
-                        newFileExtension = newFileName.substring(posOfDot + 1);
-                    }
+                        String newFileName = path + UserInput.getFileNameInput();
+
+                        String newFileExtension = "folder";
+                        posOfDot = newFileName.indexOf('.');
+                        if (posOfDot != -1) {
+                            newFileExtension = newFileName.substring(posOfDot + 1);
+                        }
 
 //                    System.out.println("original file name :" + fileName);
 //                    System.out.println("original file ext :" + fileExtension);
 //                    System.out.println("new file name :" + newFileName);
 //                    System.out.println("new file ext :" + newFileExtension);
 
-                    if (fileExtension.equals("folder") == newFileExtension.equals("folder")) { // either we are renaming a folder to a folder, or renaming a file to a file
-                        File oldFile = new File(fileName);
-                        //System.out.println(oldFile.getAbsolutePath());
-                        File newFile = new File(newFileName);
-                        //System.out.println(newFile.getAbsolutePath());
-                        boolean test = oldFile.renameTo(newFile);
-                        //System.out.println(test);
-                    }
+                        boolean successful = false;
 
-                    return true;
+                        if (fileExtension.equals("folder") == newFileExtension.equals("folder")) { // either we are renaming a folder to a folder, or renaming a file to a file
+                            File oldFile = new File(fileName);
+                            //System.out.println(oldFile.getAbsolutePath());
+                            File newFile = new File(newFileName);
+                            //System.out.println(newFile.getAbsolutePath());
+                            successful = oldFile.renameTo(newFile);
+                            //System.out.println(test);
+                        }
+
+                        message = fileExtension.equals("folder") ? "Folder" : "File";
+
+                        System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful. Please try again.");
+
+                        try {
+                            Thread.sleep(1500);
+                            if (successful) {
+                                return true;
+                            }
+                        } catch (InterruptedException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
             }
         }
     }

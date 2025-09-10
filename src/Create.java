@@ -11,7 +11,11 @@ public class Create {
     public static void createFile(String fileName, boolean isAbsolute) {
         String path = "";
 
-        if (!isAbsolute) {
+        /* when using the file navigator to perform an action we take the file name as an absolute path,
+        but set isAbsolute to false, so that we can call getFileNameInput instead of getAbsolutePathInput,
+         ensuring we use the correct input checking, an alternative to this would be passing the current directory into getAbsolutePathInput. */
+
+        if (!isAbsolute && fileName.indexOf('\\') == -1) {
             path = Main.getDefaultPath();
         }
 

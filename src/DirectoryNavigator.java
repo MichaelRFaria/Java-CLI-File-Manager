@@ -35,10 +35,6 @@ public class DirectoryNavigator {
                             updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                             break;
 
-                            /*
-                            TODO
-                                replicate Main.execOptionUntilSuccessful, easier to create a new method but could try change the previous method
-                             */
                         case "open","modify","delete":
                             Main.execOptionUntilSuccessful(false, mainOption, navigate + "\\");
                     }

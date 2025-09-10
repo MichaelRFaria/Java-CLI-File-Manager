@@ -146,7 +146,7 @@ public class Main {
             if (isAbsolute) {
                 fileName = UserInput.getAbsolutePathInput();
             } else {
-                fileName = UserInput.getFileNameInput();
+                fileName += UserInput.getFileNameInput();
             }
             fileWasFound = method.apply(fileName, isAbsolute);
         } while (!fileWasFound);

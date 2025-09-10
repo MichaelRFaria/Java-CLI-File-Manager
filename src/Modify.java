@@ -13,10 +13,13 @@ public class Modify {
         String path = "";
         String message;
 
-        if (!isAbsolute) {
+        /* when using the file navigator to perform an action we take the file name as an absolute path,
+        but set isAbsolute to false, so that we can call getFileNameInput instead of getAbsolutePathInput,
+         ensuring we use the correct input checking, an alternative to this would be passing the current directory into getAbsolutePathInput. */
+
+        if (!isAbsolute && fileName.indexOf('\\') == -1) {
             path = Main.getDefaultPath();
         }
-
 
         message = fileName.indexOf('.') != -1 ? "file" : "folder";
 
@@ -75,11 +78,11 @@ public class Modify {
                         boolean successful = false;
 
                         if (fileExtension.equals("folder") == newFileExtension.equals("folder")) { // either we are renaming a folder to a folder, or renaming a file to a file
-                            //System.out.println(oldFile.getAbsolutePath());
+                            //System.out.println(file.getAbsolutePath());
                             File newFile = new File(newFileName);
                             //System.out.println(newFile.getAbsolutePath());
                             successful = file.renameTo(newFile);
-                            //System.out.println(test);
+                            //System.out.println(successful);
                         }
 
                         message = fileExtension.equals("folder") ? "Folder" : "File";

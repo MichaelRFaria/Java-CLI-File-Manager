@@ -14,7 +14,11 @@ public class Open {
     public static boolean openFile(String fileName, boolean isAbsolute) { // returns true if file is found, and false if file is not found
         String path = "";
 
-        if (!isAbsolute) {
+        /* when using the file navigator to perform an action we take the file name as an absolute path,
+        but set isAbsolute to false, so that we can call getFileNameInput instead of getAbsolutePathInput,
+         ensuring we use the correct input checking, an alternative to this would be passing the current directory into getAbsolutePathInput. */
+
+        if (!isAbsolute && fileName.indexOf('\\') == -1) {
             path = Main.getDefaultPath();
         }
 

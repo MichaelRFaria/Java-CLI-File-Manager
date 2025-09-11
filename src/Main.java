@@ -89,12 +89,8 @@ public class Main {
                         exited = true;
                         break;
                     default:
-                        System.out.println("Please input an option from the list above, try again: ");
-                        try {
-                            Thread.sleep(1500);
-                        } catch (InterruptedException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                        System.out.println("Please input an option from the list above, try again.");
+                        delay();
                         continue;
                 }
 
@@ -118,12 +114,8 @@ public class Main {
                 }
 
             } catch (InputMismatchException e) {
-                System.out.println("Please input a valid option, try again: ");
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
+                System.out.println("Please input a valid option, try again.");
+                delay();
                 scanner.next();
             }
         }
@@ -178,6 +170,14 @@ public class Main {
         System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file");
         System.out.println("Input '0' if you would like to exit\n");
         System.out.println("Please input an option: ");
+    }
+
+    public static void delay() {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
     public static String getDefaultPath() {

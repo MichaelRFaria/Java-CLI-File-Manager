@@ -21,11 +21,7 @@ public class UserInput {
                 return input;
             } else {
                 System.out.println("File name input is invalid. Please try again.");
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
+                Main.delay();
             }
         }
     }
@@ -42,11 +38,7 @@ public class UserInput {
                 return input;
             } else {
                 System.out.println("File path is entered incorrectly. Please try again.");
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
+                Main.delay();
             }
         }
     }

@@ -39,13 +39,7 @@ public class Create {
             }
 
             // ensuring there is enough time for the above message to be read
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                System.out.println("An error occurred:");
-                System.out.println(e.getMessage()+"\n");
-                e.printStackTrace();
-            }
+            Main.delay();
 
         } catch (IOException e) {
             System.out.println("An error occurred:");

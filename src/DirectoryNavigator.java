@@ -88,12 +88,8 @@ public class DirectoryNavigator {
                         directories = temp.listFiles(); // updating file list with the files in the parent directory.
                         currentPage = 1;
                     } else {
-                        System.out.println("There is no subdirectory with the inputted name. Please try again");
-                        try {
-                            Thread.sleep(1500); // thread to ensure error message displays on screen momentarily before console clears.
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        System.out.println("There is no subdirectory with the inputted name. Please try again.");
+                        Main.delay();
                     }
                     updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                     break;

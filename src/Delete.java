@@ -16,11 +16,7 @@ public class Delete {
         File file = new File(path + fileName);
         if (!file.exists()) {
             System.out.println("File was not found, please try again.");
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            Main.delay();
             return false;
         }
 
@@ -35,13 +31,7 @@ public class Delete {
         }
 
         // ensuring there is enough time for either of the above messages to be read
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            System.out.println("An error occurred:");
-            System.out.println(e.getMessage()+"\n");
-            e.printStackTrace();
-        }
+        Main.delay();
 
         return deleted;
     }

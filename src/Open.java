@@ -25,11 +25,7 @@ public class Open {
         File file = new File(path + fileName);
         if (!file.exists()) {
             System.out.println("File was not found, please try again.");
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            Main.delay();
             return false;
         }
 
@@ -59,11 +55,7 @@ public class Open {
                     return true;
                 } catch (FileNotFoundException e) {
                     System.out.println("File was not found, please try again.");
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    Main.delay();
                     return false;
                 }
             case "exe":

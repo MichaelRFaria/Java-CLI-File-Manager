@@ -26,11 +26,7 @@ public class Modify {
         File file = new File(path + fileName);
         if (!file.exists()) {
             System.out.println(message + " was not found, please try again.");
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            Main.delay();
             return false;
         }
 
@@ -89,14 +85,8 @@ public class Modify {
 
                         System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful. Please try again.");
 
-                        try {
-                            Thread.sleep(1500);
-                            if (successful) {
-                                return true;
-                            }
-                        } catch (InterruptedException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                        Main.delay();
+                        if (successful) {return true; }
                     }
             }
         }

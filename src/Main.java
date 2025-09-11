@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static String defaultPath;
-    private static final  String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
+    private static final String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
             "Including: creating, reading/running, modifying, and deleting files/folders\n","Please input one of the following:",
             "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
             "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to delete an existing file/folder",
@@ -65,15 +65,9 @@ public class Main {
         boolean isAbsolute = false;
         boolean exited = false;
 
-        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Please input one of the following: ");
-        System.out.println("Input '1' if you would like to " + mainOption + " a file in the program's default directory");
-        System.out.println("Input '2' if you would like to " + mainOption + " a file in an inputted absolute file path");
-        System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file");
-        System.out.println("Input '0' if you would like to exit\n");
-        System.out.println("Please input an option: ");
-
         while (!exited) {
+            printSubOptions(mainOption);
+
             try {
                 int num = scanner.nextInt();
                 switch (num) {
@@ -83,14 +77,24 @@ public class Main {
                         isAbsolute = true;
                         break;
                     case 3:
-                        DirectoryNavigator.navigateDirs(mainOption);
-                        break;
+                        boolean exitedFromNav = DirectoryNavigator.navigateDirs(mainOption);
+
+                        if (exitedFromNav) {
+                            continue;
+                        } else {
+                            break;
+                        }
                     case 0:
                         reprintMainMenuOptions();
                         exited = true;
                         break;
                     default:
                         System.out.println("Please input an option from the list above, try again: ");
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         continue;
                 }
 
@@ -113,9 +117,13 @@ public class Main {
                     }
                 }
 
-
             } catch (InputMismatchException e) {
                 System.out.println("Please input a valid option, try again: ");
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
                 scanner.next();
             }
         }
@@ -159,6 +167,17 @@ public class Main {
         for (int i = 3; i < mainMenuText.length; i++) {
             System.out.println(mainMenuText[i]);
         }
+    }
+
+    public static void printSubOptions(String mainOption) {
+        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
+
+        System.out.println("Please input one of the following: ");
+        System.out.println("Input '1' if you would like to " + mainOption + " a file in the program's default directory");
+        System.out.println("Input '2' if you would like to " + mainOption + " a file in an inputted absolute file path");
+        System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file");
+        System.out.println("Input '0' if you would like to exit\n");
+        System.out.println("Please input an option: ");
     }
     
     public static String getDefaultPath() {

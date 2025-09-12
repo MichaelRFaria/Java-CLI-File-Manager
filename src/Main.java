@@ -77,13 +77,8 @@ public class Main {
                         isAbsolute = true;
                         break;
                     case 3:
-                        boolean exitedFromNav = DirectoryNavigator.navigateDirs(mainOption);
-
-                        if (exitedFromNav) {
-                            continue;
-                        } else {
-                            break;
-                        }
+                        DirectoryNavigator.navigateDirs(mainOption);
+                        break;
                     case 0:
                         reprintMainMenuOptions();
                         exited = true;
@@ -93,30 +88,29 @@ public class Main {
                         delay();
                         continue;
                 }
-
-                if (!exited) {
-                    switch (mainOption) {
-                        case "create":
-                            if (isAbsolute) {
-                                fileName = UserInput.getAbsolutePathInput();
-                            } else {
-                                fileName = UserInput.getFileNameInput();
-                            }
-                            Create.createFile(fileName, isAbsolute);
-                            break;
-
-                        case "open", "modify", "delete":
-                            execOptionUntilSuccessful(isAbsolute, mainOption, null);
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + mainOption);
-                    }
-                }
-
             } catch (InputMismatchException e) {
-                System.out.println("Please input a valid option, try again.");
+                System.out.println("Please input an integer, try again.");
                 delay();
                 scanner.next();
+            }
+
+            if (!exited) {
+                switch (mainOption) {
+                    case "create":
+                        if (isAbsolute) {
+                            fileName = UserInput.getAbsolutePathInput();
+                        } else {
+                            fileName = UserInput.getFileNameInput();
+                        }
+                        Create.createFile(fileName, isAbsolute);
+                        break;
+
+                    case "open", "modify", "delete":
+                        execOptionUntilSuccessful(isAbsolute, mainOption, null);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + mainOption);
+                }
             }
         }
     }
@@ -136,7 +130,7 @@ public class Main {
 
         //System.out.println(Thread.currentThread().getStackTrace()[2].getClassName());
 
-        boolean fileWasFound;
+        boolean successful; // this is false if the operation is unsuccessful due to error, or the file is not found at fileName location
 
         do {
             String fileName = "";
@@ -148,8 +142,8 @@ public class Main {
             } else {
                 fileName += UserInput.getFileNameInput();
             }
-            fileWasFound = method.apply(fileName, isAbsolute);
-        } while (!fileWasFound);
+            successful = method.apply(fileName, isAbsolute);
+        } while (!successful);
 
     }
 

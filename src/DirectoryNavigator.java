@@ -3,7 +3,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DirectoryNavigator {
-    public static boolean navigateDirs(String mainOption) { // sort by alphabetical, folders first, files second.
+
+    /*
+    we need this method to return a boolean to indicate whether it should reopen or exit,
+    but we also need this method to be able to return a string when we are navigating directories to find a directory to move a file to
+    so we just make the return type String and return either "exit", or the absolute path of a directory
+    */
+    public static String navigateDirs(String mainOption) { // sort by alphabetical, folders first, files second.
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         File navigate = new File(Main.getDefaultPath());
         File[] directories = navigate.listFiles();
@@ -38,6 +44,9 @@ public class DirectoryNavigator {
 
                         case "open","modify","delete":
                             Main.execOptionUntilSuccessful(false, mainOption, navigate + "\\");
+
+                        case "move":
+                            return navigate.getAbsolutePath();
                     }
                     break; // this causes navigation menu to close after action is completed
                 case "!":
@@ -95,7 +104,7 @@ public class DirectoryNavigator {
                     break;
             }
         }
-        return true;
+        return null;
     }
 
     public static void updateNavigationMenu(int viewType, int currentPage, File[] directories, String oldDirectoryPath, String mainOption) {
@@ -174,7 +183,7 @@ public class DirectoryNavigator {
 
         /*
         TODO
-            when opening/running files,the above message should say "...'$' to " + mainOption + " a FILE in this directory..." (should not say folder)
+            when opening/running, moving files,the above message should say "...'$' to " + mainOption + " a FILE in this directory..." (should not say folder)
          */
     }
 }

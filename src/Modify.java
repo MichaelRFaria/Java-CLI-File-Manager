@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.InputMismatchException;
 
 public class Modify {
     /* modifications could include:
@@ -11,7 +12,14 @@ public class Modify {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         String path = "";
+        String originalFileName;
         String message;
+
+        if (!isAbsolute) { // original file name is needed to append to the destination directory, when moving the file
+            originalFileName = fileName;
+        } else {
+            originalFileName = fileName.substring(fileName.lastIndexOf('\\') + 1);
+        }
 
         /* when using the file navigator to perform an action we take the file name as an absolute path,
         but set isAbsolute to false, so that we can call getFileNameInput instead of getAbsolutePathInput,
@@ -34,29 +42,32 @@ public class Modify {
 
         System.out.println("Please input one of the following: ");
         System.out.println("Input '1' if you would like to rename this file");
+        System.out.println("Input '2' if you would like to move this file");
         System.out.println("\nPlease input an option: ");
 
+        int posOfDot;
+        boolean successful = false;
+
         while (true) {
-            String input = Main.getScanner().next();
+            try {
+                int num = Main.getScanner().nextInt();
 
-            // need a way to exit from these options like typing something special "~", etc
-            switch (input) {
-                case "1":
-                    String fileExtension = "folder";
-                    int posOfDot = fileName.indexOf('.');
-                    if (posOfDot != -1) {
-                        fileExtension = fileName.substring(posOfDot + 1);
-                    }
+                // need a way to exit from these options like typing something special "~", etc
+                switch (num) {
+                    case 1:
+                        String fileExtension = "folder";
 
-                    fileName = path + fileName;
+                        posOfDot = fileName.indexOf('.');
+                        if (posOfDot != -1) {
+                            fileExtension = fileName.substring(posOfDot + 1);
+                        }
 
-                    // need to implement isAbsolute checking
-                    if (isAbsolute) {
-                        int posOfSlash = fileName.lastIndexOf('\\');
-                        path = fileName.substring(0, posOfSlash + 1);
-                    }
+                        fileName = path + fileName;
 
-                    while (true) { // breaks when renaming is successful, where it will return true.
+                        if (isAbsolute) {
+                            int posOfSlash = fileName.lastIndexOf('\\');
+                            path = fileName.substring(0, posOfSlash + 1);
+                        }
 
                         String newFileName = path + UserInput.getFileNameInput();
 
@@ -65,13 +76,6 @@ public class Modify {
                         if (posOfDot != -1) {
                             newFileExtension = newFileName.substring(posOfDot + 1);
                         }
-
-//                    System.out.println("original file name :" + fileName);
-//                    System.out.println("original file ext :" + fileExtension);
-//                    System.out.println("new file name :" + newFileName);
-//                    System.out.println("new file ext :" + newFileExtension);
-
-                        boolean successful = false;
 
                         if (fileExtension.equals("folder") == newFileExtension.equals("folder")) { // either we are renaming a folder to a folder, or renaming a file to a file
                             //System.out.println(file.getAbsolutePath());
@@ -86,9 +90,82 @@ public class Modify {
                         System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful. Please try again.");
 
                         Main.delay();
-                        if (successful) {return true; }
-                    }
+                        if (successful) {
+                            return true;
+                        }
+                        break;
+
+                    case 2:
+                        String destination = null;
+                        posOfDot = fileName.indexOf('.');
+                        if (posOfDot == -1) { // we can only move files, if there is not a dot in the file name, then it must be a folder
+                            System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
+                            Main.delay();
+                            break;
+                        }
+
+                        fileName = path + fileName;
+
+                        while (true) { // breaks when moving is successful, where it will return true.
+                            System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
+
+                            System.out.println("Please input one of the following: ");
+                            System.out.println("Input '1' if you would like to enter the destination via an absolute path");
+                            System.out.println("Input '2' if you would like to enter the destination via navigating the directories");
+                            System.out.println("\nPlease input an option: ");
+
+                            try {
+                                int input = Main.getScanner().nextInt();
+                                switch (input) {
+                                    case 1:
+                                        destination = UserInput.getAbsolutePathInput();
+
+                                        File temp = new File(destination);
+                                        if (temp.isDirectory()) {
+                                            break;
+                                        } else {
+                                            System.out.println("This directory does not exist, please try again.");
+                                            Main.delay();
+                                            continue;
+                                        }
+                                    case 2:
+                                        destination = DirectoryNavigator.navigateDirs("move");
+                                        break;
+                                    default:
+                                        System.out.println("Please input an option from the list above, try again.");
+                                        Main.delay();
+                                        continue;
+                                }
+                            } catch (InputMismatchException e) {
+                                System.out.println("Please input a valid option, try again.");
+                                Main.delay();
+                                Main.getScanner().next();
+                            }
+
+                            File newFile = new File(destination + "\\" + originalFileName);
+                            System.out.println(destination + "\\" + originalFileName);
+                            successful = file.renameTo(newFile);
+
+                            System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful. Please try again.");
+
+                            Main.delay();
+                            if (successful) {
+                                return true;
+                            }
+                            break;
+                        }
+                        break;
+                    default:
+                        System.out.println("Please input an option from the list above, try again.");
+                        Main.delay();
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please input an integer, try again.");
+                Main.delay();
+                Main.getScanner().next();
             }
         }
     }
 }
+
+

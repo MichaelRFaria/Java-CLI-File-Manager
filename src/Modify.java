@@ -57,7 +57,7 @@ public class Modify {
                     case 1:
                         String fileExtension = "folder";
 
-                        posOfDot = fileName.indexOf('.');
+                        posOfDot = fileName.lastIndexOf('.');
                         if (posOfDot != -1) {
                             fileExtension = fileName.substring(posOfDot + 1);
                         }

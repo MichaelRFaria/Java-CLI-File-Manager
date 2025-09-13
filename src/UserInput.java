@@ -16,8 +16,7 @@ public class UserInput {
             System.out.println("Please input a valid file/folder name: ");
 
             String input = Main.getScanner().next();
-            // scanner doesnt except empty inputs this is stupid until actual name rules checking rules are implemented
-            if (!input.isEmpty()) { // name checking rules go here
+            if (input.matches("[a-zA-Z0-9_\\-.]+") && input.length() < 255 && !input.endsWith(" ") && !input.endsWith(".")) { // name checking rules go here
                 return input;
             } else {
                 System.out.println("File name input is invalid. Please try again.");

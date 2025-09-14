@@ -3,16 +3,17 @@ import java.util.InputMismatchException;
 
 public class Modify {
     /* modifications could include:
-        renaming files
+        renaming files (DONE)
         editing text files
-        moving files
+        moving files (DONE)
+        copying files
      */
 
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         String path = "";
-        String originalFileName;
+        String originalFileName = "";
         String message;
 
         if (!isAbsolute) { // original file name is needed to append to the destination directory, when moving the file
@@ -43,6 +44,7 @@ public class Modify {
         System.out.println("Please input one of the following: ");
         System.out.println("Input '1' if you would like to rename this file");
         System.out.println("Input '2' if you would like to move this file");
+        System.out.println("Input '3' if you would like to delete this file");
         System.out.println("\nPlease input an option: ");
 
         int posOfDot;
@@ -64,12 +66,17 @@ public class Modify {
 
                         fileName = path + fileName;
 
-                        if (isAbsolute) {
+                        if (fileName.indexOf('\\') != -1) {
                             int posOfSlash = fileName.lastIndexOf('\\');
                             path = fileName.substring(0, posOfSlash + 1);
                         }
 
                         String newFileName = path + UserInput.getFileNameInput();
+
+                        System.out.println("Path: " + path);
+                        System.out.println("filename after path added: " + fileName);
+                        System.out.println("orginal filename: " + originalFileName);
+                        System.out.println("newfilename: " + newFileName);
 
                         String newFileExtension = "folder";
                         posOfDot = newFileName.indexOf('.');
@@ -94,7 +101,6 @@ public class Modify {
                             return true;
                         }
                         break;
-
                     case 2:
                         String destination = null;
                         posOfDot = fileName.indexOf('.');
@@ -102,6 +108,10 @@ public class Modify {
                             System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
                             Main.delay();
                             break;
+                            /*
+                            todo
+                                fix this, what the hell, needs to be in a loop or something instead with an more appropriate message
+                             */
                         }
 
                         fileName = path + fileName;
@@ -148,11 +158,25 @@ public class Modify {
 
                             System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful. Please try again.");
 
+                            // ensuring there is enough time for either of the above messages to be read
                             Main.delay();
                             if (successful) {
                                 return true;
                             }
                             break;
+                        }
+                        break;
+                    case 3:
+                        System.out.println("deleting file");
+
+                        successful = file.delete();
+
+                        System.out.println(successful ? "Successfully deleted " + fileName : fileName + " could not be deleted. Please try again.");
+
+                        // ensuring there is enough time for either of the above messages to be read
+                        Main.delay();
+                        if (successful) {
+                            return true;
                         }
                         break;
                     default:

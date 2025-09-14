@@ -31,24 +31,23 @@ public class DirectoryNavigator {
             oldDirectoryPath = navigate.getAbsolutePath();
 
             switch (input) {
-                // this should change depending on what you are doing (create/open/delete, etc.)
+                // this should change depending on what you are doing (create/open etc.)
                 case "$":
                     switch (mainOption) {
-                        case "create":
-                            fileName = navigate + "\\" + UserInput.getFileNameInput();
-                            Create.createFile(fileName, true);
+                        case "create", "modify":
+                            Main.execOptionUntilSuccessful(false, mainOption, navigate + "\\");
 
                             directories = navigate.listFiles(); // update files list with the newly created file
                             updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                             break;
 
-                        case "open","modify","delete":
+                        case "open":
                             Main.execOptionUntilSuccessful(false, mainOption, navigate + "\\");
-
+                            break;
                         case "move":
                             return navigate.getAbsolutePath();
                     }
-                    break; // this causes navigation menu to close after action is completed
+                    break;
                 case "!":
                     currentPage = 1; // current page set to one to prevent empty pages from being displayed since filtering down the view changes the amount of pages.
                     viewType = (viewType + 1) % 3;

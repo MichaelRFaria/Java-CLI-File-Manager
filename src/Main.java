@@ -8,10 +8,9 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static String defaultPath;
     private static final String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
-            "Including: creating, reading/running, modifying, and deleting files/folders\n","Please input one of the following:",
+            "Including: creating, reading/running, and modifying files/folders\n","Please input one of the following:",
             "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
-            "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to delete an existing file/folder",
-            "Input '0' if you would like to exit\n", "Please input an option: "};
+            "Input '3' if you would like to modify an existing file/folder", "Input '0' if you would like to exit\n", "Please input an option: "};
 
     /*
     TODO:
@@ -48,9 +47,6 @@ public class Main {
                 case "3":
                     subOptionMenu("modify");
                     break;
-                case "4":
-                    subOptionMenu("delete");
-                    break;
                 case "0":
                     System.exit(0);
                     break;
@@ -64,9 +60,11 @@ public class Main {
         String fileName;
         boolean isAbsolute = false;
         boolean exited = false;
+        boolean navMenuUsed = false;
 
         while (!exited) {
             printSubOptions(mainOption);
+            navMenuUsed = false;
 
             try {
                 int num = scanner.nextInt();
@@ -78,6 +76,7 @@ public class Main {
                         break;
                     case 3:
                         DirectoryNavigator.navigateDirs(mainOption);
+                        navMenuUsed = true;
                         break;
                     case 0:
                         reprintMainMenuOptions();
@@ -94,7 +93,7 @@ public class Main {
                 scanner.next();
             }
 
-            if (!exited) {
+            if (!exited && !navMenuUsed) {
                 switch (mainOption) {
                     case "create":
                         if (isAbsolute) {
@@ -105,7 +104,7 @@ public class Main {
                         Create.createFile(fileName, isAbsolute);
                         break;
 
-                    case "open", "modify", "delete":
+                    case "open", "modify":
                         execOptionUntilSuccessful(isAbsolute, mainOption, null);
                         break;
                     default:
@@ -121,9 +120,9 @@ public class Main {
         alternatively you could use a switch case statement, but you would need two switch cases which would be ugly and stupid and boring
          */
         Map <String, BiFunction<String, Boolean, Boolean>> optionToExec = Map.of(
+                "create", Create::createFile,
                 "open", Open::openFile,
-                "modify", Modify::modifyFile,
-                "delete", Delete::deleteFile
+                "modify", Modify::modifyFile
         );
 
         BiFunction<String, Boolean, Boolean> method = optionToExec.get(mainOption);
@@ -144,7 +143,6 @@ public class Main {
             }
             successful = method.apply(fileName, isAbsolute);
         } while (!successful);
-
     }
 
     public static void reprintMainMenuOptions() {

@@ -39,19 +39,12 @@ public class Modify {
             return false;
         }
 
-        System.out.println("Now modifying the " + message + ": " + fileName + "\n");
-
-        System.out.println("Please input one of the following: ");
-        System.out.println("Input '1' if you would like to rename this file");
-        System.out.println("Input '2' if you would like to move this file");
-        System.out.println("Input '3' if you would like to delete this file");
-        System.out.println("\nPlease input an option: ");
-
         int posOfDot;
         boolean successful = false;
 
         while (true) {
             try {
+                printSubOptions(message, fileName);
                 int num = Main.getScanner().nextInt();
 
                 // need a way to exit from these options like typing something special "~", etc
@@ -73,10 +66,10 @@ public class Modify {
 
                         String newFileName = path + UserInput.getFileNameInput();
 
-                        System.out.println("Path: " + path);
-                        System.out.println("filename after path added: " + fileName);
-                        System.out.println("orginal filename: " + originalFileName);
-                        System.out.println("newfilename: " + newFileName);
+//                        System.out.println("Path: " + path);
+//                        System.out.println("filename after path added: " + fileName);
+//                        System.out.println("orginal filename: " + originalFileName);
+//                        System.out.println("newfilename: " + newFileName);
 
                         String newFileExtension = "folder";
                         posOfDot = newFileName.indexOf('.');
@@ -189,6 +182,16 @@ public class Modify {
                 Main.getScanner().next();
             }
         }
+    }
+
+    public static void printSubOptions(String message, String fileName) {
+        System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
+        System.out.println("Now modifying the " + message + ": " + fileName + "\n");
+        System.out.println("Please input one of the following: ");
+        System.out.println("Input '1' if you would like to rename this file");
+        System.out.println("Input '2' if you would like to move this file");
+        System.out.println("Input '3' if you would like to delete this file");
+        System.out.println("\nPlease input an option: ");
     }
 }
 

@@ -41,9 +41,14 @@ public class Open {
                     Scanner reader = new Scanner(file);
 
                     System.out.println("Printing the contents of: " + path + fileName + "\n");
-                    while (reader.hasNextLine()) {
-                        String line = reader.nextLine();
-                        System.out.println(line);
+
+                    if (reader.hasNextLine()) {
+                        while (reader.hasNextLine()) {
+                            String line = reader.nextLine();
+                            System.out.println(line);
+                        }
+                    } else {
+                        System.out.println("This file is empty!");
                     }
 
                     System.out.println("\nEnd of file...");

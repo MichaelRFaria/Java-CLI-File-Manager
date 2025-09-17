@@ -51,7 +51,7 @@ public class Modify {
                 int num = Main.getScanner().nextInt();
 
                 // need a way to exit from these options like typing something special "~", etc
-                switch (num) {
+                switch (num) { // renaming file/folder
                     case 1:
                         String fileExtension = "folder";
 
@@ -97,7 +97,7 @@ public class Modify {
                             return true;
                         }
                         break;
-                    case 2:
+                    case 2: // moving a file
                         String destination = null;
                         posOfDot = fileName.indexOf('.');
                         if (posOfDot == -1) { // we can only move files, if there is not a dot in the file name, then it must be a folder
@@ -158,7 +158,7 @@ public class Modify {
                             break;
                         }
                         break;
-                    case 3:
+                    case 3: // deleting a file
                         System.out.println("deleting file");
 
                         successful = file.delete();
@@ -171,13 +171,13 @@ public class Modify {
                             return true;
                         }
                         break;
-                    case 4:
+                    case 4: // editing the contents of a text file
                         /*
                         todo
-                             must read text file, displaying appropriate screen (figure out if options or file should be displayed first and make it cleaner)
+                             must read text file,
                              allow the user to:
                              clear the file
-                             write new lines to the file
+                             write new lines to the file (done)
                              delete one line of the file
                              add new lines (actual new lines \n)
 
@@ -199,7 +199,7 @@ public class Modify {
                             System.out.println("Input '2' if you would like to remove the previous line from the file");
                             System.out.println("Input '3' if you would like to add a line break to the file");
                             System.out.println("Input '4' if you would like to clear the file");
-                            System.out.println("Input '5' if you would like to stop editing the file");
+                            System.out.println("Input '0' if you would like to stop editing the file");
                             System.out.println("\nPlease input an option: ");
 
                             num = Main.getScanner().nextInt();
@@ -225,7 +225,7 @@ public class Modify {
                                 case 4:
                                     System.out.println("clear");
                                     break;
-                                case 5:
+                                case 0:
                                     exited = true;
                                     break;
                                 default:
@@ -235,6 +235,8 @@ public class Modify {
                             }
                         }
                         break;
+                    case 0: // exiting this menu
+                        return true;
                     default:
                         System.out.println("Please input an option from the list above, try again.");
                         Main.delay();
@@ -260,6 +262,7 @@ public class Modify {
         System.out.println("Input '2' if you would like to move this file");
         System.out.println("Input '3' if you would like to delete this file");
         System.out.println("Input '4' if you would like to edit the contents of this file (text files only)");
+        System.out.println("Input '0' if you would like to exit from this menu");
         System.out.println("\nPlease input an option: ");
     }
 }

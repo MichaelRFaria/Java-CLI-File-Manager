@@ -204,14 +204,15 @@ public class Modify {
 
                             num = Main.getScanner().nextInt();
                             Main.getScanner().nextLine();
+                            String input;
 
                             switch (num) {
                                 case 1:
                                     System.out.print("Enter your line to add: ");
-                                    String line = Main.getScanner().nextLine();
+                                    input = Main.getScanner().nextLine();
                                     // try-with-resources (special syntax, works with objects that have AutoCloseable, catch block optional, seems pretty neat)
                                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
-                                        writer.append(line);
+                                        writer.append(input);
                                         writer.newLine();
                                         writer.flush();
                                     }
@@ -220,10 +221,21 @@ public class Modify {
                                     System.out.println("remove");
                                     break;
                                 case 3:
-                                    System.out.println("line break");
+                                    System.out.println("Adding a line break...");
+                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+                                        writer.newLine();
+                                        writer.flush();
+                                    }
+                                    Main.delay();
                                     break;
                                 case 4:
-                                    System.out.println("clear");
+                                    System.out.print("This option will delete all of the contents of the selected file. Please enter 'Y' to confirm that you want to clear the file, or any other character to cancel the operation: ");
+                                    input = Main.getScanner().nextLine();
+                                    if (input.equalsIgnoreCase("y")) {
+                                        System.out.println("\nClearing the file contents");
+                                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {} // opening FileWriter without append mode, automatically clears the file's contents
+                                        Main.delay();
+                                    }
                                     break;
                                 case 0:
                                     exited = true;

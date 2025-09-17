@@ -1,4 +1,7 @@
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.InputMismatchException;
 
 public class Modify {
@@ -168,14 +171,83 @@ public class Modify {
                             return true;
                         }
                         break;
+                    case 4:
+                        /*
+                        todo
+                             must read text file, displaying appropriate screen (figure out if options or file should be displayed first and make it cleaner)
+                             allow the user to:
+                             clear the file
+                             write new lines to the file
+                             delete one line of the file
+                             add new lines (actual new lines \n)
+
+                         */
+                        if (!fileName.substring(fileName.lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
+                            System.out.println("This option is only compatible with text files.");
+                            Main.delay();
+                            break;
+                        }
+
+                        boolean exited = false;
+                        fileName = path + fileName;
+
+                        while (!exited) {
+                            Open.openFile(fileName, isAbsolute);
+
+                            System.out.println("\nNow please input one of the following: ");
+                            System.out.println("Input '1' if you would like to write a new line to the file");
+                            System.out.println("Input '2' if you would like to remove the previous line from the file");
+                            System.out.println("Input '3' if you would like to add a line break to the file");
+                            System.out.println("Input '4' if you would like to clear the file");
+                            System.out.println("Input '5' if you would like to stop editing the file");
+                            System.out.println("\nPlease input an option: ");
+
+                            num = Main.getScanner().nextInt();
+                            Main.getScanner().nextLine();
+
+                            switch (num) {
+                                case 1:
+                                    System.out.print("Enter your line to add: ");
+                                    String line = Main.getScanner().nextLine();
+                                    // try-with-resources (special syntax, works with objects that have AutoCloseable, catch block optional, seems pretty neat)
+                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+                                        writer.append(line);
+                                        writer.newLine();
+                                        writer.flush();
+                                    }
+                                    break;
+                                case 2:
+                                    System.out.println("remove");
+                                    break;
+                                case 3:
+                                    System.out.println("line break");
+                                    break;
+                                case 4:
+                                    System.out.println("clear");
+                                    break;
+                                case 5:
+                                    exited = true;
+                                    break;
+                                default:
+                                    System.out.println("Please input an option from the list above, try again.");
+                                    Main.delay();
+                                    break;
+                            }
+                        }
+                        break;
                     default:
                         System.out.println("Please input an option from the list above, try again.");
                         Main.delay();
+                        break;
+
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer, try again.");
                 Main.delay();
                 Main.getScanner().next();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Something went wrong with the writer's operations.");
             }
         }
     }
@@ -187,6 +259,7 @@ public class Modify {
         System.out.println("Input '1' if you would like to rename this file");
         System.out.println("Input '2' if you would like to move this file");
         System.out.println("Input '3' if you would like to delete this file");
+        System.out.println("Input '4' if you would like to edit the contents of this file (text files only)");
         System.out.println("\nPlease input an option: ");
     }
 }

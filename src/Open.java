@@ -35,12 +35,17 @@ public class Open {
             fileExtension = fileName.substring(posOfDot + 1);
         }
 
+        /*
+        todo
+            maybe add page navigation system like DirectoryNavigator.updateNavigationMenu
+         */
+
         switch (fileExtension) {
             case "txt":
                 try {
                     Scanner reader = new Scanner(file);
 
-                    System.out.println("Printing the contents of: " + path + fileName + "\n");
+                    System.out.println("\nPrinting the contents of: " + path + fileName + "\n");
 
                     if (reader.hasNextLine()) {
                         while (reader.hasNextLine()) {
@@ -53,9 +58,16 @@ public class Open {
 
                     System.out.println("\nEnd of file...");
 
-                    System.out.println("\nPress enter to return close the text file.");
-                    Main.getScanner().next();
-                    // doesn't actually close file right now, but can either "close" file by using the cmd clear technique or by reprinting menu options in loop of the method call
+                    /*
+                    this sucks so much. essentially we are figuring out if we are opening the file via the Modify.java class in which the below message is not appropriate.
+                    ideally we would pass an isWriting bool into openFile, but it would mess up the bifunction map in Main.execOptionUntilSuccessful
+                    which is super awesome and cool and doesn't deserve to be deleted :(
+                    */
+
+                    if (!Thread.currentThread().getStackTrace()[2].getClassName().equals("Modify")) {
+                        System.out.println("\nEnter any character to close the text file.");
+                        Main.getScanner().next();
+                    }
 
                     return true;
                 } catch (FileNotFoundException e) {
@@ -69,7 +81,7 @@ public class Open {
                     String dir = fileName.substring(0, fileName.lastIndexOf('\\'));
                     // in the case of running through an absolute file path or the navigation menu, we need to find the working directory in order to execute our command
                     Runtime.getRuntime().exec(fileName, null, new File(dir));
-                    System.out.println("Running the executable at:" + fileName);
+                    System.out.println("\nRunning the executable at:" + fileName);
                     return true;
                 } catch (IOException e) {
                     System.out.println("an error occurred when starting the .exe");

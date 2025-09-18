@@ -2,34 +2,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.InputMismatchException;
 
 public class Modify {
-    /* modifications could include:
-        renaming files (DONE)
-        editing text files
-        moving files (DONE)
-        copying files
-     */
-
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         String path = "";
-        String originalFileName = "";
+        String actualFileName;
         String message;
 
-        if (!isAbsolute) { // original file name is needed to append to the destination directory, when moving the file
-            originalFileName = fileName;
+        if (isAbsolute) {
+            actualFileName = fileName.substring(fileName.lastIndexOf('\\') + 1);
         } else {
-            originalFileName = fileName.substring(fileName.lastIndexOf('\\') + 1);
-        }
-
-        /* when using the file navigator to perform an action we take the file name as an absolute path,
-        but set isAbsolute to false, so that we can call getFileNameInput instead of getAbsolutePathInput,
-         ensuring we use the correct input checking, an alternative to this would be passing the current directory into getAbsolutePathInput. */
-
-        if (!isAbsolute && fileName.indexOf('\\') == -1) {
+            actualFileName = fileName;
             path = Main.getDefaultPath();
         }
 
@@ -44,38 +29,42 @@ public class Modify {
 
         int posOfDot;
         boolean successful = false;
+        String input;
+        String fullFileName = path + fileName;
 
         while (true) {
+            System.out.println("ACTUAL FILE NAME: " + actualFileName);
+            System.out.println("FULL FILE NAME (PATH): " + fullFileName);
             try {
-                printSubOptions(message, fileName);
-                int num = Main.getScanner().nextInt();
+                printSubOptions(message, actualFileName);
+                input = Main.getScanner().nextLine().trim();
 
                 // need a way to exit from these options like typing something special "~", etc
-                switch (num) { // renaming file/folder
-                    case 1:
+                switch (input) { // renaming file/folder
+                    case "1":
                         String fileExtension = "folder";
 
-                        posOfDot = fileName.lastIndexOf('.');
+                        posOfDot = actualFileName.lastIndexOf('.');
                         if (posOfDot != -1) {
-                            fileExtension = fileName.substring(posOfDot + 1);
+                            fileExtension = actualFileName.substring(posOfDot + 1);
                         }
 
-                        fileName = path + fileName;
+                        String tempPath = path;
 
-                        if (fileName.indexOf('\\') != -1) {
-                            int posOfSlash = fileName.lastIndexOf('\\');
-                            path = fileName.substring(0, posOfSlash + 1);
+                        if (fullFileName.indexOf('\\') != -1) {
+                            int posOfSlash = fullFileName.lastIndexOf('\\');
+                            tempPath = fullFileName.substring(0, posOfSlash + 1);
                         }
 
-                        String newFileName = path + UserInput.getFileNameInput();
+                        String newFileName = tempPath + UserInput.getFileNameInput();
 
-//                        System.out.println("Path: " + path);
-//                        System.out.println("filename after path added: " + fileName);
-//                        System.out.println("orginal filename: " + originalFileName);
-//                        System.out.println("newfilename: " + newFileName);
+                        System.out.println("Path: " + tempPath);
+                        System.out.println("filename after path added: " + fullFileName);
+                        System.out.println("original filename: " + actualFileName);
+                        System.out.println("new filename: " + newFileName);
 
                         String newFileExtension = "folder";
-                        posOfDot = newFileName.indexOf('.');
+                        posOfDot = newFileName.lastIndexOf('.');
                         if (posOfDot != -1) {
                             newFileExtension = newFileName.substring(posOfDot + 1);
                         }
@@ -97,16 +86,14 @@ public class Modify {
                             return true;
                         }
                         break;
-                    case 2: // moving a file
-                        String destination = null;
-                        posOfDot = fileName.indexOf('.');
-                        if (posOfDot == -1) { // we can only move files, if there is not a dot in the file name, then it must be a folder
+                    case "2": // moving a file
+                        String destination;
+                        posOfDot = actualFileName.indexOf('.');
+                        if (posOfDot == -1) { // we can only move files, if there is not a dot in the file name, then it must be a folder (technically folders can have dots in their names in windows, but I don't care)
                             System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
                             Main.delay();
                             break;
                         }
-
-                        fileName = path + fileName;
 
                         while (true) { // breaks when moving is successful, where it will return true.
                             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
@@ -116,36 +103,32 @@ public class Modify {
                             System.out.println("Input '2' if you would like to enter the destination via navigating the directories");
                             System.out.println("\nPlease input an option: ");
 
-                            try {
-                                int input = Main.getScanner().nextInt();
-                                switch (input) {
-                                    case 1:
-                                        destination = UserInput.getAbsolutePathInput();
+                            input = Main.getScanner().nextLine().trim();
 
-                                        File temp = new File(destination);
-                                        if (temp.isDirectory()) {
-                                            break;
-                                        } else {
-                                            System.out.println("This directory does not exist, please try again.");
-                                            Main.delay();
-                                            continue;
-                                        }
-                                    case 2:
-                                        destination = DirectoryNavigator.navigateDirs("move");
+                            switch (input) {
+                                case "1":
+                                    destination = UserInput.getAbsolutePathInput();
+
+                                    File temp = new File(destination);
+                                    if (temp.isDirectory()) {
                                         break;
-                                    default:
-                                        System.out.println("Please input an option from the list above, try again.");
+                                    } else {
+                                        System.out.println("This directory does not exist, please try again.");
                                         Main.delay();
                                         continue;
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println("Please input a valid option, try again.");
-                                Main.delay();
-                                Main.getScanner().next();
+                                    }
+                                case "2":
+                                    destination = DirectoryNavigator.navigateDirs("move");
+                                    break;
+                                default:
+                                    System.out.println("Please input an option from the list above, try again.");
+                                    Main.delay();
+                                    continue;
                             }
 
-                            File newFile = new File(destination + "\\" + originalFileName);
-                            System.out.println(destination + "\\" + originalFileName);
+
+                            File newFile = new File(destination + "\\" + actualFileName);
+                            System.out.println(destination + "\\" + actualFileName);
                             successful = file.renameTo(newFile);
 
                             System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful. Please try again.");
@@ -158,12 +141,12 @@ public class Modify {
                             break;
                         }
                         break;
-                    case 3: // deleting a file
+                    case "3": // deleting a file
                         System.out.println("deleting file");
 
                         successful = file.delete();
 
-                        System.out.println(successful ? "Successfully deleted " + fileName : fileName + " could not be deleted. Please try again.");
+                        System.out.println(successful ? "Successfully deleted " + actualFileName : actualFileName + " could not be deleted. Please try again.");
 
                         // ensuring there is enough time for either of the above messages to be read
                         Main.delay();
@@ -171,28 +154,17 @@ public class Modify {
                             return true;
                         }
                         break;
-                    case 4: // editing the contents of a text file
-                        /*
-                        todo
-                             must read text file,
-                             allow the user to:
-                             clear the file
-                             write new lines to the file (done)
-                             delete one line of the file
-                             add new lines (actual new lines \n)
-
-                         */
-                        if (!fileName.substring(fileName.lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
+                    case "4": // editing the contents of a text file
+                        if (!actualFileName.substring(actualFileName.lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
                             System.out.println("This option is only compatible with text files.");
                             Main.delay();
                             break;
                         }
 
                         boolean exited = false;
-                        fileName = path + fileName;
 
                         while (!exited) {
-                            Open.openFile(fileName, isAbsolute);
+                            Open.openFile(fullFileName, isAbsolute);
 
                             System.out.println("\nNow please input one of the following: ");
                             System.out.println("Input '1' if you would like to write a new line to the file");
@@ -202,42 +174,41 @@ public class Modify {
                             System.out.println("Input '0' if you would like to stop editing the file");
                             System.out.println("\nPlease input an option: ");
 
-                            num = Main.getScanner().nextInt();
-                            Main.getScanner().nextLine();
-                            String input;
+                            input = Main.getScanner().nextLine().trim();
+                            //Main.getScanner().nextLine();
 
-                            switch (num) {
-                                case 1:
+                            switch (input) {
+                                case "1":
                                     System.out.print("Enter your line to add: ");
-                                    input = Main.getScanner().nextLine();
+                                    input = Main.getScanner().nextLine(); // not trimmed in case the user wants leading spaces for some reason
                                     // try-with-resources (special syntax, works with objects that have AutoCloseable, catch block optional, seems pretty neat)
-                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullFileName, true))) {
                                         writer.append(input);
                                         writer.newLine();
                                         writer.flush();
                                     }
                                     break;
-                                case 2:
+                                case "2":
                                     System.out.println("remove");
                                     break;
-                                case 3:
+                                case "3":
                                     System.out.println("Adding a line break...");
-                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullFileName, true))) {
                                         writer.newLine();
                                         writer.flush();
                                     }
                                     Main.delay();
                                     break;
-                                case 4:
+                                case "4":
                                     System.out.print("This option will delete all of the contents of the selected file. Please enter 'Y' to confirm that you want to clear the file, or any other character to cancel the operation: ");
-                                    input = Main.getScanner().nextLine();
+                                    input = Main.getScanner().nextLine().trim();
                                     if (input.equalsIgnoreCase("y")) {
                                         System.out.println("\nClearing the file contents");
-                                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {} // opening FileWriter without append mode, automatically clears the file's contents
+                                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullFileName))) {} // opening FileWriter without append mode, automatically clears the file's contents
                                         Main.delay();
                                     }
                                     break;
-                                case 0:
+                                case "0":
                                     exited = true;
                                     break;
                                 default:
@@ -247,7 +218,7 @@ public class Modify {
                             }
                         }
                         break;
-                    case 0: // exiting this menu
+                    case "0": // exiting this menu
                         return true;
                     default:
                         System.out.println("Please input an option from the list above, try again.");
@@ -255,10 +226,6 @@ public class Modify {
                         break;
 
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Please input an integer, try again.");
-                Main.delay();
-                Main.getScanner().next();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("Something went wrong with the writer's operations.");

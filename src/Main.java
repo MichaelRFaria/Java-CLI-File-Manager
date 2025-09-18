@@ -1,4 +1,3 @@
-import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 import java.io.File;
@@ -35,7 +34,7 @@ public class Main {
         }
 
         while (true) {
-            String choice = scanner.next();
+            String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
@@ -60,38 +59,35 @@ public class Main {
         String fileName;
         boolean isAbsolute = false;
         boolean exited = false;
-        boolean navMenuUsed = false;
+        boolean navMenuUsed;
 
         while (!exited) {
             printSubOptions(mainOption);
             navMenuUsed = false;
 
-            try {
-                int num = scanner.nextInt();
-                switch (num) {
-                    case 1:
-                        break;
-                    case 2:
-                        isAbsolute = true;
-                        break;
-                    case 3:
-                        DirectoryNavigator.navigateDirs(mainOption);
-                        navMenuUsed = true;
-                        break;
-                    case 0:
-                        reprintMainMenuOptions();
-                        exited = true;
-                        break;
-                    default:
-                        System.out.println("Please input an option from the list above, try again.");
-                        delay();
-                        continue;
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Please input an integer, try again.");
-                delay();
-                scanner.next();
+            String input = scanner.nextLine().trim();
+            switch (input) {
+                case "1":
+                    // this is initialised as false but we need to set it to false regardless as if we option "2" eventually we will return back to this menu and isAbsolute will still be set to true
+                    isAbsolute = false;
+                    break;
+                case "2":
+                    isAbsolute = true;
+                    break;
+                case "3":
+                    DirectoryNavigator.navigateDirs(mainOption);
+                    navMenuUsed = true;
+                    break;
+                case "0":
+                    reprintMainMenuOptions();
+                    exited = true;
+                    break;
+                default:
+                    System.out.println("Please input an option from the list above, try again.");
+                    delay();
+                    continue;
             }
+
 
             if (!exited && !navMenuUsed) {
                 switch (mainOption) {
@@ -136,10 +132,10 @@ public class Main {
             if (currNavDir != null) {
                 fileName += currNavDir;
             }
-            if (isAbsolute) {
-                fileName = UserInput.getAbsolutePathInput();
-            } else {
+            if (!isAbsolute || currNavDir != null) {
                 fileName += UserInput.getFileNameInput();
+            } else {
+                fileName += UserInput.getAbsolutePathInput();
             }
             successful = method.apply(fileName, isAbsolute);
         } while (!successful);

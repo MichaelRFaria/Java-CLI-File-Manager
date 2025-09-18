@@ -22,11 +22,10 @@ public class DirectoryNavigator {
 
         updateNavigationMenu(viewType, currentPage, directories, navigate.getAbsolutePath(), mainOption);
 
-        String fileName;
         boolean exited = false;
 
         while (!exited) {
-            String input = Main.getScanner().next();
+            String input = Main.getScanner().nextLine().trim();
 
             oldDirectoryPath = navigate.getAbsolutePath();
 
@@ -35,14 +34,14 @@ public class DirectoryNavigator {
                 case "$":
                     switch (mainOption) {
                         case "create", "modify":
-                            Main.execOptionUntilSuccessful(false, mainOption, navigate + "\\");
+                            Main.execOptionUntilSuccessful(true, mainOption, navigate + "\\");
 
                             directories = navigate.listFiles(); // update files list with the newly created file
                             updateNavigationMenu(viewType, currentPage, directories, oldDirectoryPath, mainOption);
                             break;
 
                         case "open":
-                            Main.execOptionUntilSuccessful(false, mainOption, navigate + "\\");
+                            Main.execOptionUntilSuccessful(true, mainOption, navigate + "\\");
                             break;
                         case "move":
                             return navigate.getAbsolutePath();

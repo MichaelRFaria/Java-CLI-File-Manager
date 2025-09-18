@@ -15,7 +15,7 @@ public class UserInput {
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
             System.out.println("Please input a valid file/folder name: ");
 
-            String input = Main.getScanner().next();
+            String input = Main.getScanner().nextLine().trim();
             if (input.matches("[a-zA-Z0-9_\\-.]+") && input.length() < 255 && !input.endsWith(" ") && !input.endsWith(".")) { // name checking rules go here
                 return input;
             } else {
@@ -31,7 +31,7 @@ public class UserInput {
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
             System.out.println("Please input a valid absolute path: ");
 
-            String input = Main.getScanner().next();
+            String input = Main.getScanner().nextLine().trim();
             File temp = new File(input);
             if (temp.isAbsolute()) { // path checking rules go here
                 return input;

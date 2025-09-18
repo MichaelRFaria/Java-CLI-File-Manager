@@ -66,9 +66,15 @@ public class Open {
 
                     if (!Thread.currentThread().getStackTrace()[2].getClassName().equals("Modify")) {
                         System.out.println("\nEnter any character to close the text file.");
-                        Main.getScanner().next();
+                        Main.getScanner().nextLine().trim();
                     }
 
+                    /*
+                    always close any scanner you make that you don't plan to use, spent so much time trying to find out why some operations fail after editing a text file in Modify.java
+                    turns out it was just this, which locks the file making renaming/moving/deleting fail whilst editing the file still succeeds
+                     */
+
+                    reader.close();
                     return true;
                 } catch (FileNotFoundException e) {
                     System.out.println("File was not found, please try again.");

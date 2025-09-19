@@ -4,24 +4,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Modify {
-    /*
-    todo (notable)
-        by making File file a static variable we can create setters and getters capable of getting fullFileName and actualFileName from the file variable itself
-        thus we could remove the actualFileName and fullFileName variables, in fact you wouldnt even need to pass anything into the methods
-     */
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
-        String actualFileName;
         String fullFileName;
         String message;
 
         if (isAbsolute) {
             fullFileName = fileName;
-            actualFileName = fileName.substring(fileName.lastIndexOf('\\') + 1);
         } else {
             fullFileName = Main.getDefaultPath() + fileName;
-            actualFileName = fileName;
         }
 
         message = fileName.indexOf('.') != -1 ? "file" : "folder";
@@ -36,31 +28,25 @@ public class Modify {
         String input;
 
         while (true) {
-            printSubOptions(message, actualFileName);
-//            System.out.println("ACTUAL FILE NAME: " + actualFileName);
-//            System.out.println("FULL FILE NAME (PATH): " + fullFileName);
+            printSubOptions(file);
             input = Main.getScanner().nextLine().trim();
 
             // need a way to exit from these options like typing something special "~", etc
             switch (input) { // renaming file/folder
                 case "1":
-                    file = renameFile(actualFileName, fullFileName, file);
-                    fullFileName = file.getAbsolutePath();
-                    actualFileName = fullFileName.substring(fullFileName.lastIndexOf('\\') + 1);
+                    file = renameFile(file);
                     break;
                 case "2": // moving a file
-                    File newFile = moveFile(actualFileName, file);
+                    File newFile = moveFile(file);
                     if (newFile != null) {
                         file = newFile;
-                        fullFileName = file.getAbsolutePath();
-                        actualFileName = fullFileName.substring(fullFileName.lastIndexOf('\\') + 1);
                     }
                     break;
                 case "3": // deleting a file
-                    if (deleteFile(actualFileName, file)) {return true; }
+                    if (deleteFile(file)) {return true; }
                     break;
                 case "4": // editing the contents of a text file
-                    editTextFile(actualFileName, fullFileName);
+                    editTextFile(file);
                     break;
                 case "0": // exiting this menu
                     return true;
@@ -72,23 +58,18 @@ public class Modify {
         }
     }
 
-    public static File renameFile(String actualFileName, String fullFileName, File file) {
+    public static File renameFile(File file) {
         String fileExtension = "folder";
 
-        int posOfDot = actualFileName.lastIndexOf('.');
+        int posOfDot = getActualFileName(file).lastIndexOf('.');
         if (posOfDot != -1) { // if the file name has a dot, then we must be handling a file and not a folder
-            fileExtension = actualFileName.substring(posOfDot + 1);
+            fileExtension = getActualFileName(file).substring(posOfDot + 1);
         }
 
         String path;
-        path = fullFileName.substring(0, fullFileName.lastIndexOf('\\') + 1); // getting the path so we can append the inputted new name of the file to the original path
+        path = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1); // getting the path so we can append the inputted new name of the file to the original path
 
         String newFileName = path + UserInput.getFileNameInput();
-
-//        System.out.println("Path: " + path);
-//        System.out.println("filename after path added: " + fullFileName);
-//        System.out.println("original filename: " + actualFileName);
-//        System.out.println("new filename: " + newFileName);
 
         String newFileExtension = "folder";
         posOfDot = newFileName.lastIndexOf('.');
@@ -100,8 +81,6 @@ public class Modify {
 
         File renamedFile = new File(newFileName);
         if (fileExtension.equals("folder") == newFileExtension.equals("folder")) { // either we are renaming a folder to a folder, or renaming a file to a file
-            //System.out.println(file.getAbsolutePath());
-            //System.out.println(newFile.getAbsolutePath());
             successful = file.renameTo(renamedFile);
             //System.out.println(successful);
         }
@@ -118,10 +97,10 @@ public class Modify {
         }
     }
 
-    public static File moveFile(String actualFileName, File file) {
+    public static File moveFile(File file) {
         String destination;
 
-        int posOfDot = actualFileName.indexOf('.');
+        int posOfDot = getActualFileName(file).indexOf('.');
         if (posOfDot == -1) { // we can only move files, if there is not a dot in the file name, then it must be a folder (technically folders can have dots in their names in windows, but I don't care)
             System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
             Main.delay();
@@ -159,9 +138,8 @@ public class Modify {
                     continue; // causes loop
             }
 
-
-            File newFile = new File(destination + "\\" + actualFileName);
-            System.out.println(destination + "\\" + actualFileName);
+            File newFile = new File(destination + "\\" + getActualFileName(file));
+            System.out.println(destination + "\\" + getActualFileName(file));
             boolean successful = file.renameTo(newFile);
 
             System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful. Please try again.");
@@ -176,20 +154,20 @@ public class Modify {
         }
     }
 
-    public static boolean deleteFile(String actualFileName, File file) {
+    public static boolean deleteFile(File file) {
         System.out.println("deleting file");
 
         boolean successful = file.delete();
 
-        System.out.println(successful ? "Successfully deleted " + actualFileName : actualFileName + " could not be deleted. Please try again.");
+        System.out.println(successful ? "Successfully deleted " + getActualFileName(file) : getActualFileName(file) + " could not be deleted. Please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
         Main.delay();
         return successful;
     }
 
-    public static void editTextFile(String actualFileName, String fullFileName) {
-        if (!actualFileName.substring(actualFileName.lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
+    public static void editTextFile(File file) {
+        if (!getActualFileName(file).substring(getActualFileName(file).lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
             System.out.println("This option is only compatible with text files.");
             Main.delay();
             return;
@@ -198,7 +176,7 @@ public class Modify {
         boolean exited = false;
 
         while (!exited) {
-            Open.openFile(fullFileName, true);
+            Open.openFile(file.getAbsolutePath(), true);
 
             System.out.println("\nNow please input one of the following: ");
             System.out.println("Input '1' if you would like to write a new line to the file");
@@ -217,7 +195,7 @@ public class Modify {
                         System.out.print("Enter your line to add: ");
                         input = Main.getScanner().nextLine(); // not trimmed in case the user wants leading spaces for some reason
                         // try-with-resources (special syntax, works with objects that have AutoCloseable, catch block optional, seems pretty neat)
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullFileName, true))) {
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath(), true))) {
                             writer.append(input);
                             writer.newLine();
                             writer.flush();
@@ -228,7 +206,7 @@ public class Modify {
                         break;
                     case "3":
                         System.out.println("Adding a line break...");
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullFileName, true))) {
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath(), true))) {
                             writer.newLine();
                             writer.flush();
                         }
@@ -239,7 +217,7 @@ public class Modify {
                         input = Main.getScanner().nextLine().trim();
                         if (input.equalsIgnoreCase("y")) {
                             System.out.println("\nClearing the file contents");
-                            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullFileName))) {
+                            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {
                             } // opening FileWriter without append mode, automatically clears the file's contents
                             Main.delay();
                         }
@@ -258,11 +236,15 @@ public class Modify {
         }
     }
 
+    public static String getActualFileName(File file) {
+        return file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf('\\') + 1);
+    }
 
+    public static void printSubOptions(File file) {
+        String message = getActualFileName(file).indexOf('.') != -1 ? "file" : "folder";
 
-    public static void printSubOptions(String message, String fileName) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Now modifying the " + message + ": " + fileName + "\n");
+        System.out.println("Now modifying the " + message + ": " + getActualFileName(file) + " located at: " + file.getAbsolutePath() + "\n");
         System.out.println("Please input one of the following: ");
         System.out.println("Input '1' if you would like to rename this file");
         System.out.println("Input '2' if you would like to move this file");

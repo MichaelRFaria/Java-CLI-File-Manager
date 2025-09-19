@@ -4,6 +4,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Modify {
+    /*
+    todo (notable)
+        by making File file a static variable we can create setters and getters capable of getting fullFileName and actualFileName from the file variable itself
+        thus we could remove the actualFileName and fullFileName variables, in fact you wouldnt even need to pass anything into the methods
+     */
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
@@ -12,11 +17,11 @@ public class Modify {
         String message;
 
         if (isAbsolute) {
-            actualFileName = fileName.substring(fileName.lastIndexOf('\\') + 1);
             fullFileName = fileName;
+            actualFileName = fileName.substring(fileName.lastIndexOf('\\') + 1);
         } else {
-            actualFileName = fileName;
             fullFileName = Main.getDefaultPath() + fileName;
+            actualFileName = fileName;
         }
 
         message = fileName.indexOf('.') != -1 ? "file" : "folder";
@@ -31,18 +36,25 @@ public class Modify {
         String input;
 
         while (true) {
+            printSubOptions(message, actualFileName);
 //            System.out.println("ACTUAL FILE NAME: " + actualFileName);
 //            System.out.println("FULL FILE NAME (PATH): " + fullFileName);
-            printSubOptions(message, actualFileName);
             input = Main.getScanner().nextLine().trim();
 
             // need a way to exit from these options like typing something special "~", etc
             switch (input) { // renaming file/folder
                 case "1":
-                    if (renameFile(actualFileName, fullFileName, file)) {return true; }
+                    file = renameFile(actualFileName, fullFileName, file);
+                    fullFileName = file.getAbsolutePath();
+                    actualFileName = fullFileName.substring(fullFileName.lastIndexOf('\\') + 1);
                     break;
                 case "2": // moving a file
-                    if (moveFile(actualFileName, file)) {return true; }
+                    File newFile = moveFile(actualFileName, file);
+                    if (newFile != null) {
+                        file = newFile;
+                        fullFileName = file.getAbsolutePath();
+                        actualFileName = fullFileName.substring(fullFileName.lastIndexOf('\\') + 1);
+                    }
                     break;
                 case "3": // deleting a file
                     if (deleteFile(actualFileName, file)) {return true; }
@@ -60,7 +72,7 @@ public class Modify {
         }
     }
 
-    public static boolean renameFile(String actualFileName, String fullFileName, File file) {
+    public static File renameFile(String actualFileName, String fullFileName, File file) {
         String fileExtension = "folder";
 
         int posOfDot = actualFileName.lastIndexOf('.');
@@ -86,11 +98,11 @@ public class Modify {
 
         boolean successful = false;
 
+        File renamedFile = new File(newFileName);
         if (fileExtension.equals("folder") == newFileExtension.equals("folder")) { // either we are renaming a folder to a folder, or renaming a file to a file
             //System.out.println(file.getAbsolutePath());
-            File newFile = new File(newFileName);
             //System.out.println(newFile.getAbsolutePath());
-            successful = file.renameTo(newFile);
+            successful = file.renameTo(renamedFile);
             //System.out.println(successful);
         }
 
@@ -99,20 +111,24 @@ public class Modify {
         System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful. Please try again.");
 
         Main.delay();
-        return (successful);
+        if (successful) {
+            return renamedFile;
+        } else {
+            return file;
+        }
     }
 
-    public static boolean moveFile(String actualFileName, File file) {
+    public static File moveFile(String actualFileName, File file) {
         String destination;
 
         int posOfDot = actualFileName.indexOf('.');
         if (posOfDot == -1) { // we can only move files, if there is not a dot in the file name, then it must be a folder (technically folders can have dots in their names in windows, but I don't care)
             System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
             Main.delay();
-            return false;
+            return null;
         }
 
-        while (true) { // breaks when moving is successful, where it will return true.
+        while (true) { // breaks when moving is successful, where it will return the new file
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
             System.out.println("Please input one of the following: ");
@@ -152,7 +168,11 @@ public class Modify {
 
             // ensuring there is enough time for either of the above messages to be read
             Main.delay();
-            return successful;
+            if (successful) {
+                return newFile;
+            } else {
+                return null;
+            }
         }
     }
 

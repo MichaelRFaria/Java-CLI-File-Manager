@@ -2,6 +2,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Modify {
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
@@ -200,9 +202,26 @@ public class Modify {
                             writer.newLine();
                             writer.flush();
                         }
+                        Main.delay();
                         break;
                     case "2":
-                        System.out.println("remove");
+                        System.out.println("Removing last line from the file...");
+                        Scanner reader = new Scanner(file);
+                        ArrayList<String> lines = new ArrayList<>();
+
+                        while (reader.hasNextLine()) {
+                            lines.add(reader.nextLine());
+                        }
+
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {
+                            for (int i = 0; i < lines.size() - 1; i++) {
+                                writer.write(lines.get(i));
+                                writer.newLine();
+                            }
+                        }
+
+                        reader.close();
+                        Main.delay();
                         break;
                     case "3":
                         System.out.println("Adding a line break...");

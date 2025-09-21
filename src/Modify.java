@@ -132,7 +132,7 @@ public class Modify {
                         continue; // causes loop
                     }
                 case "2":
-                    destination = DirectoryNavigator.navigateDirs("move");
+                    destination = DirectoryNavigator.navigateDirs("move", file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1));
                     break;
                 default:
                     System.out.println("Please input an option from the list above, try again.");

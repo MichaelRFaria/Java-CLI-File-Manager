@@ -9,9 +9,11 @@ public class DirectoryNavigator {
     but we also need this method to be able to return a string when we are navigating directories to find a directory to move a file to
     so we just make the return type String and return either "exit", or the absolute path of a directory
     */
-    public static String navigateDirs(String mainOption) { // sort by alphabetical, folders first, files second.
+
+    public static String navigateDirs(String mainOption, String path) { // sort by alphabetical, folders first, files second.
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        File navigate = new File(Main.getDefaultPath());
+        File navigate = new File(path);
+        System.out.println(path);
         File[] directories = navigate.listFiles();
         String oldDirectoryPath;
 

@@ -75,7 +75,7 @@ public class Main {
                     isAbsolute = true;
                     break;
                 case "3":
-                    DirectoryNavigator.navigateDirs(mainOption);
+                    DirectoryNavigator.navigateDirs(mainOption, getDefaultPath());
                     navMenuUsed = true;
                     break;
                 case "0":

@@ -9,7 +9,7 @@ public class Modify {
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
-        File file = Main.createFileVarIfExists(fileName, isAbsolute);
+        File file = FileUtils.createFileVarIfExists(fileName, isAbsolute);
         if (file == null) {return false; }
 
         String input;
@@ -48,9 +48,9 @@ public class Modify {
     public static File renameFile(File file) {
         String fileExtension = "folder";
 
-        int posOfDot = getActualFileName(file).lastIndexOf('.');
+        int posOfDot = FileUtils.getActualFileName(file).lastIndexOf('.');
         if (posOfDot != -1) { // if the file name has a dot, then we must be handling a file and not a folder
-            fileExtension = getActualFileName(file).substring(posOfDot + 1);
+            fileExtension = FileUtils.getActualFileName(file).substring(posOfDot + 1);
         }
 
         String path;
@@ -87,7 +87,7 @@ public class Modify {
     public static File moveFile(File file) {
         String destination;
 
-        int posOfDot = getActualFileName(file).indexOf('.');
+        int posOfDot = FileUtils.getActualFileName(file).indexOf('.');
         if (posOfDot == -1) { // we can only move files, if there is not a dot in the file name, then it must be a folder (technically folders can have dots in their names in windows, but I don't care)
             System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
             Main.delay();
@@ -125,8 +125,8 @@ public class Modify {
                     continue; // causes loop
             }
 
-            File newFile = new File(destination + "\\" + getActualFileName(file));
-            System.out.println(destination + "\\" + getActualFileName(file));
+            File newFile = new File(destination + "\\" + FileUtils.getActualFileName(file));
+            System.out.println(destination + "\\" + FileUtils.getActualFileName(file));
             boolean successful = file.renameTo(newFile);
 
             System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful. Please try again.");
@@ -146,7 +146,7 @@ public class Modify {
 
         boolean successful = file.delete();
 
-        System.out.println(successful ? "Successfully deleted " + getActualFileName(file) : getActualFileName(file) + " could not be deleted. Please try again.");
+        System.out.println(successful ? "Successfully deleted " + FileUtils.getActualFileName(file) : FileUtils.getActualFileName(file) + " could not be deleted. Please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
         Main.delay();
@@ -154,7 +154,7 @@ public class Modify {
     }
 
     public static void editTextFile(File file) {
-        if (!getActualFileName(file).substring(getActualFileName(file).lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
+        if (!FileUtils.getActualFileName(file).substring(FileUtils.getActualFileName(file).lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
             System.out.println("This option is only compatible with text files.");
             Main.delay();
             return;
@@ -240,15 +240,11 @@ public class Modify {
         }
     }
 
-    public static String getActualFileName(File file) {
-        return file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf('\\') + 1);
-    }
-
     public static void printSubOptions(File file) {
-        String message = getActualFileName(file).indexOf('.') != -1 ? "file" : "folder";
+        String message = FileUtils.getActualFileName(file).indexOf('.') != -1 ? "file" : "folder";
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Now modifying the " + message + ": " + getActualFileName(file) + " located at: " + file.getAbsolutePath() + "\n");
+        System.out.println("Now modifying the " + message + ": " + FileUtils.getActualFileName(file) + " located at: " + file.getAbsolutePath() + "\n");
         System.out.println("Please input one of the following: ");
         System.out.println("Input '1' if you would like to rename this file");
         System.out.println("Input '2' if you would like to move this file");

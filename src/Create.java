@@ -9,23 +9,21 @@ public class Create {
      */
 
     public static boolean createFile(String fileName, boolean isAbsolute) {
-        String path = "";
+        String fullFileName;
 
-        /* when using the file navigator to perform an action we take the file name as an absolute path,
-        but set isAbsolute to false, so that we can call getFileNameInput instead of getAbsolutePathInput,
-         ensuring we use the correct input checking, an alternative to this would be passing the current directory into getAbsolutePathInput. */
-
-        if (!isAbsolute && fileName.indexOf('\\') == -1) {
-            path = Main.getDefaultPath();
+        if (isAbsolute) {
+            fullFileName = fileName;
+        } else {
+            fullFileName = Main.getDefaultPath() + fileName;
         }
 
         System.out.println("creating file/folder");
 
         try {
             boolean created;
-            File file = new File(path + fileName);
+            File file = new File(fullFileName);
 
-            if ((path + fileName).indexOf('.') == -1) { // if there is no '.' then we must be creating a folder
+            if ((fullFileName).indexOf('.') == -1) { // if there is no '.' then we must be creating a folder
                 created = file.mkdir();
             } else { // if there is a ',' then we must be creating a file
                 created = file.createNewFile();

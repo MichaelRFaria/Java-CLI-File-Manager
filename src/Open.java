@@ -12,13 +12,17 @@ public class Open {
      */
 
     public static boolean openFile(String fileName, boolean isAbsolute) { // returns true if file is found, and false if file is not found
-        File file = Main.createFileVarIfExists(fileName, isAbsolute);
+        File file = FileUtils.createFileVarIfExists(fileName, isAbsolute);
         if (file == null) {return false; }
 
         String fileExtension = "invalid";
-        int posOfDot = fileName.indexOf('.');
+        int posOfDot = FileUtils.getActualFileName(file).indexOf('.');
         if (posOfDot != -1) {
-            fileExtension = fileName.substring(posOfDot + 1);
+            fileExtension = FileUtils.getActualFileName(file).substring(posOfDot + 1);
+        } else {
+            System.out.println("We cannot execute or read a folder, please try with a file.");
+            Main.delay();
+            return false;
         }
 
         /*
@@ -69,11 +73,11 @@ public class Open {
                 }
             case "exe":
                 try {
-                    System.out.println(fileName);
-                    String dir = fileName.substring(0, fileName.lastIndexOf('\\'));
+                    //System.out.println(file.getAbsolutePath());
+                    String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\'));
                     // in the case of running through an absolute file path or the navigation menu, we need to find the working directory in order to execute our command
-                    Runtime.getRuntime().exec(fileName, null, new File(dir));
-                    System.out.println("\nRunning the executable at:" + fileName);
+                    Runtime.getRuntime().exec(file.getAbsolutePath(), null, new File(dir));
+                    System.out.println("\nRunning the executable " + FileUtils.getActualFileName(file) + " at: " + file.getAbsolutePath());
                     return true;
                 } catch (IOException e) {
                     System.out.println("an error occurred when starting the .exe");

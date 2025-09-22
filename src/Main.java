@@ -183,26 +183,6 @@ public class Main {
         System.out.println("Please input an option: ");
     }
 
-    public static File createFileVarIfExists(String fileName, boolean isAbsolute) {
-        String fullFileName;
-
-        if (isAbsolute) {
-            fullFileName = fileName;
-        } else {
-            fullFileName = Main.getDefaultPath() + fileName;
-        }
-
-        String message = fileName.indexOf('.') != -1 ? "file" : "folder";
-
-        File file = new File(fullFileName);
-        if (!file.exists()) {
-            System.out.println(message + " was not found, please try again.");
-            Main.delay();
-            return null;
-        }
-        return file;
-    }
-
     public static void delay() {
         try {
             Thread.sleep(1500);

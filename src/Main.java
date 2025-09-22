@@ -7,19 +7,30 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static String defaultPath;
     private static final String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
-            "Including: creating, reading/running, and modifying files/folders\n","Please input one of the following:",
+            "Including: creating, reading/running, modifying and searching files/folders\n","Please input one of the following:",
             "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
-            "Input '3' if you would like to modify an existing file/folder", "Input '0' if you would like to exit\n", "Please input an option: "};
+            "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to search for an existing file/folder",
+            "Input '0' if you would like to exit\n", "Please input an option: "};
 
     /*
-    TODO:
-        (file search option?)
-            maybe allow user to configure how many files they would like displayed on the screen at a time
-        implement exit option for each option and suboption
-            change while loop condition to a boolean variable, then set boolean to true by default, and false when a switch-case or if-conditional triggers it
-            after default and absolute, it should auto go back to suboption menu
-    */
+    todo next time
+        implement file search option
+        should only work with folders
+        requests a name of a folder/file
+        uses depth search to find it
+        system to list duplicates and request user to input which one they want to open
+        if the folder/file is found or a duplicate is specified
+            list of main options for that file/folder (read/run or modify)
+     */
 
+    /*
+    todo before finishing the project
+        double check text formatting for all the menus
+        run the program through cmd
+        remove all unnecessary print statements
+        update readme.md
+        add comments and javadoc comments (can right click on method name and generate javadoc)
+     */
 
     public static void main(String[] args) {
         File file = new File("");
@@ -45,6 +56,9 @@ public class Main {
                     break;
                 case "3":
                     subOptionMenu("modify");
+                    break;
+                case "4":
+                    subOptionMenu("search");
                     break;
                 case "0":
                     System.exit(0);
@@ -99,7 +113,14 @@ public class Main {
                         }
                         Create.createFile(fileName, isAbsolute);
                         break;
-
+                    case "search":
+                        if (isAbsolute) {
+                            fileName = UserInput.getAbsolutePathInput();
+                        } else {
+                            fileName = UserInput.getFileNameInput();
+                        }
+                        Search.searchForFile(fileName, isAbsolute);
+                        break;
                     case "open", "modify":
                         execOptionUntilSuccessful(isAbsolute, mainOption, null);
                         break;
@@ -148,6 +169,8 @@ public class Main {
             System.out.println(mainMenuText[i]);
         }
     }
+
+    // todo - these suboptions are phrased wierdly, maybe add a case statement that changes the print statements more, e.g: when passing search option 2 and 3 should say "folder" instead of "file"
 
     public static void printSubOptions(String mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent

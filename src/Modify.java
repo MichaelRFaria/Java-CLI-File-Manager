@@ -9,23 +9,8 @@ public class Modify {
     public static boolean modifyFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
-        String fullFileName;
-        String message;
-
-        if (isAbsolute) {
-            fullFileName = fileName;
-        } else {
-            fullFileName = Main.getDefaultPath() + fileName;
-        }
-
-        message = fileName.indexOf('.') != -1 ? "file" : "folder";
-
-        File file = new File(fullFileName);
-        if (!file.exists()) {
-            System.out.println(message + " was not found, please try again.");
-            Main.delay();
-            return false;
-        }
+        File file = Main.createFileVarIfExists(fileName, isAbsolute);
+        if (file == null) {return false; }
 
         String input;
 

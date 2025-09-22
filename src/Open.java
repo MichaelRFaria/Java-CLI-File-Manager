@@ -12,22 +12,8 @@ public class Open {
      */
 
     public static boolean openFile(String fileName, boolean isAbsolute) { // returns true if file is found, and false if file is not found
-        String path = "";
-
-        /* when using the file navigator to perform an action we take the file name as an absolute path,
-        but set isAbsolute to false, so that we can call getFileNameInput instead of getAbsolutePathInput,
-         ensuring we use the correct input checking, an alternative to this would be passing the current directory into getAbsolutePathInput. */
-
-        if (!isAbsolute && fileName.indexOf('\\') == -1) {
-            path = Main.getDefaultPath();
-        }
-
-        File file = new File(path + fileName);
-        if (!file.exists()) {
-            System.out.println("File was not found, please try again.");
-            Main.delay();
-            return false;
-        }
+        File file = Main.createFileVarIfExists(fileName, isAbsolute);
+        if (file == null) {return false; }
 
         String fileExtension = "invalid";
         int posOfDot = fileName.indexOf('.');
@@ -45,7 +31,7 @@ public class Open {
                 try {
                     Scanner reader = new Scanner(file);
 
-                    System.out.println("\nPrinting the contents of: " + path + fileName + "\n");
+                    System.out.println("\nPrinting the contents of: " + file.getAbsolutePath() + "\n");
 
                     if (reader.hasNextLine()) {
                         while (reader.hasNextLine()) {

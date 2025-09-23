@@ -2,6 +2,13 @@ import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
+/*
+todo
+    implement exit upon successful search
+    implement system to be able to select a searched file and either open or modify it
+        take input, input must be between 0 and results.size(), then results.get(input), switch statement with either open or modify then pass in that file
+ */
+
 public class Search {
     public static boolean searchForFile(String fileName, boolean isAbsolute) {
         File file = FileUtils.createFileVarIfExists(fileName, isAbsolute);
@@ -41,11 +48,28 @@ public class Search {
                 }
             }
 
-            for (int i = 0; i < matchingFiles.size(); i++) {
-                System.out.println(matchingFiles.get(i).getAbsolutePath());
-            }
+            printResults(matchingFiles, input);
+        }
+    }
 
-            System.out.println("done");
+    public static boolean printResults(ArrayList<File> results, String matchingString) {
+        String fileType;
+        if (matchingString.contains(".")) {
+            fileType = "file";
+        } else {
+            fileType = "folder";
+        }
+
+        if (results.isEmpty()) {
+            System.out.println("No " + fileType + "s called " + matchingString + " were found. Please try again.");
+            Main.delay();
+            return false;
+        } else {
+            System.out.println("The following " + fileType + "s found are located at: ");
+            for (int i = 0; i < results.size(); i++) {
+                System.out.println(i+1 + ": " + results.get(i).getAbsolutePath());
+            }
+            return true;
         }
     }
 }

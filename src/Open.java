@@ -78,6 +78,7 @@ public class Open {
                     // in the case of running through an absolute file path or the navigation menu, we need to find the working directory in order to execute our command
                     Runtime.getRuntime().exec(file.getAbsolutePath(), null, new File(dir));
                     System.out.println("\nRunning the executable " + FileUtils.getActualFileName(file) + " at: " + file.getAbsolutePath());
+                    Main.delay();
                     return true;
                 } catch (IOException e) {
                     System.out.println("an error occurred when starting the .exe");

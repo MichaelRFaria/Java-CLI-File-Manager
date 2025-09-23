@@ -10,7 +10,7 @@ public class FileUtils {
             fullFileName = Main.getDefaultPath() + fileName;
         }
 
-        String message = fileName.indexOf('.') != -1 ? "file" : "folder";
+        String message = fileName.contains(".") ? "file" : "folder";
 
         File file = new File(fullFileName);
         if (!file.exists()) {

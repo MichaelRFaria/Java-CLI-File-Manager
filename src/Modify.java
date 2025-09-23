@@ -241,7 +241,7 @@ public class Modify {
     }
 
     public static void printSubOptions(File file) {
-        String message = FileUtils.getActualFileName(file).indexOf('.') != -1 ? "file" : "folder";
+        String message = FileUtils.getActualFileName(file).contains(".") ? "file" : "folder";
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Now modifying the " + message + ": " + FileUtils.getActualFileName(file) + " located at: " + file.getAbsolutePath() + "\n");

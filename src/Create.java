@@ -2,12 +2,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class Create {
-
-        /*
-    TODO
-        when creating a file in default/absolute go back to sub menu after a few seconds
-     */
-
     public static boolean createFile(String fileName, boolean isAbsolute) {
         String fullFileName;
 
@@ -23,10 +17,10 @@ public class Create {
             boolean created;
             File file = new File(fullFileName);
 
-            if ((fullFileName).indexOf('.') == -1) { // if there is no '.' then we must be creating a folder
-                created = file.mkdir();
-            } else { // if there is a ',' then we must be creating a file
+            if (fullFileName.contains(".")) { // if there is a ',' then we must be creating a file
                 created = file.createNewFile();
+            } else { // if there is no '.' then we must be creating a folder
+                created = file.mkdir();
             }
 
             // printing success/error message

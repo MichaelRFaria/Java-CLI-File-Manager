@@ -4,10 +4,7 @@ import java.util.ArrayList;
 
 /*
 todo
-    implement system to be able to select a searched file and either open or modify it
-        take input, input must be between 0 and results.size(), then results.get(input), switch statement with either open or modify then pass in that file
     implement the file navigation method
-    the default file path method should just run in output, it should not request for the name of a folder
  */
 
 public class Search {

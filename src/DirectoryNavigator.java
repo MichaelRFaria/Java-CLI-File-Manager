@@ -45,6 +45,8 @@ public class DirectoryNavigator {
                         case "open":
                             Main.execOptionUntilSuccessful(true, mainOption, navigate + "\\");
                             break;
+                        case "search":
+                            Search.searchForFile(navigate + "\\", true);
                         case "move":
                             return navigate.getAbsolutePath();
                     }

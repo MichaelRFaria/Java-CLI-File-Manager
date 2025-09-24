@@ -105,14 +105,6 @@ public class Main {
 
             if (!exited && !navMenuUsed) {
                 switch (mainOption) {
-                    case "create":
-                        if (isAbsolute) {
-                            fileName = UserInput.getAbsolutePathInput();
-                        } else {
-                            fileName = UserInput.getFileNameInput();
-                        }
-                        Create.createFile(fileName, isAbsolute);
-                        break;
                     case "search":
                         if (isAbsolute) {
                             fileName = UserInput.getAbsolutePathInput();
@@ -121,7 +113,7 @@ public class Main {
                         }
                         Search.searchForFile(fileName, isAbsolute);
                         break;
-                    case "open", "modify":
+                    case "create", "open", "modify":
                         execOptionUntilSuccessful(isAbsolute, mainOption, null);
                         break;
                     default:
@@ -147,17 +139,24 @@ public class Main {
         //System.out.println(Thread.currentThread().getStackTrace()[2].getClassName());
 
         boolean successful; // this is false if the operation is unsuccessful due to error, or the file is not found at fileName location
-
         do {
             String fileName = "";
             if (currNavDir != null) {
                 fileName += currNavDir;
             }
+
             if (!isAbsolute || currNavDir != null) {
                 fileName += UserInput.getFileNameInput();
             } else {
                 fileName += UserInput.getAbsolutePathInput();
             }
+
+            if (fileName.contains("*")) { // when an operation is cancelled we return out this method, and back to the previous menu.
+                System.out.println("Operation cancelled.");
+                Main.delay();
+                return;
+            }
+
             successful = method.apply(fileName, isAbsolute);
         } while (!successful);
     }

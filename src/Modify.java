@@ -58,6 +58,12 @@ public class Modify {
 
         String newFileName = path + UserInput.getFileNameInput();
 
+        if (newFileName.contains("*")) { // when the rename operation is unsuccessful (or cancelled), we return the original file.
+            System.out.println("Operation cancelled.");
+            Main.delay();
+            return file;
+        }
+
         String newFileExtension = "folder";
         posOfDot = newFileName.lastIndexOf('.');
         if (posOfDot != -1) {  // if the file name has a dot, then we must be handling a file and not a folder
@@ -123,6 +129,12 @@ public class Modify {
                     System.out.println("Please input an option from the list above, try again.");
                     Main.delay();
                     continue; // causes loop
+            }
+
+            if (destination.contains("*")) { // when the move operation is unsuccessful (or cancelled), we return null.
+                System.out.println("Operation cancelled.");
+                Main.delay();
+                return null;
             }
 
             File newFile = new File(destination + "\\" + FileUtils.getActualFileName(file));

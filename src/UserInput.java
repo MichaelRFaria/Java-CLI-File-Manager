@@ -13,10 +13,12 @@ public class UserInput {
 
         while (true) {
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-            System.out.println("Please input a valid file/folder name: ");
+            System.out.println("Please input a valid file/folder name (or '*' to cancel): ");
 
             String input = Main.getScanner().nextLine().trim();
-            if (input.matches("[a-zA-Z0-9_\\-.]+") && input.length() < 255 && !input.endsWith(" ") && !input.endsWith(".")) { // name checking rules go here
+            if (input.equals("*")) {
+                return input;
+            } else if (input.matches("[a-zA-Z0-9_\\-.]+") && input.length() < 255 && !input.endsWith(" ") && !input.endsWith(".")) { // name checking rules go here
                 return input;
             } else {
                 System.out.println("File name input is invalid. Please try again.");
@@ -29,9 +31,13 @@ public class UserInput {
 
         while (true) {
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-            System.out.println("Please input a valid absolute path: ");
+            System.out.println("Please input a valid absolute path (or '*' to cancel): ");
 
             String input = Main.getScanner().nextLine().trim();
+            if (input.equals("*")) { // we just return the '*' as the actual cancelling operation varies depending on who calls this
+                return input;
+            }
+
             File temp = new File(input);
             if (temp.isAbsolute()) { // path checking rules go here
                 return input;

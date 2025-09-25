@@ -1,4 +1,4 @@
-# Java-CLI-FIle-Manager
+# Java-CLI-File-Manager
 A command-line file manager built in **Java**, designed to make file and folder operations simple and intuitive from the terminal.
 This project is still a **work in progress** 🚧
 

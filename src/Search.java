@@ -2,11 +2,6 @@ import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
-/*
-todo
-    implement the file navigation method
- */
-
 public class Search {
     public static boolean searchForFile(String fileName, boolean isAbsolute) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
@@ -63,11 +58,11 @@ public class Search {
         }
 
         if (results.isEmpty()) {
-            System.out.println("No " + fileType + "s called " + matchingString + " were found. Please try again.");
+            System.out.println("\nNo " + fileType + "s called " + matchingString + " were found. Please try again.");
             Main.delay();
             return false;
         } else {
-            System.out.println("The following " + fileType + "s found are located at: ");
+            System.out.println("\nThe following " + fileType + "s found are located at: ");
             for (int i = 0; i < results.size(); i++) {
                 System.out.println(i+1 + ": " + results.get(i).getAbsolutePath());
             }

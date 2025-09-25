@@ -35,7 +35,7 @@ public class DirectoryNavigator {
                 // this should change depending on what you are doing (create/open etc.)
                 case "$":
                     switch (mainOption) {
-                        case "create", "modify":
+                        case "create", "modify","search":
                             Main.execOptionUntilSuccessful(true, mainOption, navigate + "\\");
 
                             directories = navigate.listFiles(); // update files list with the newly created file
@@ -45,8 +45,6 @@ public class DirectoryNavigator {
                         case "open":
                             Main.execOptionUntilSuccessful(true, mainOption, navigate + "\\");
                             break;
-                        case "search":
-                            Search.searchForFile(navigate + "\\", true);
                         case "move":
                             return navigate.getAbsolutePath();
                     }

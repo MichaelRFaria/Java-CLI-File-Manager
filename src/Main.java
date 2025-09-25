@@ -104,21 +104,7 @@ public class Main {
 
 
             if (!exited && !navMenuUsed) {
-                switch (mainOption) {
-                    case "search":
-                        if (isAbsolute) {
-                            fileName = UserInput.getAbsolutePathInput();
-                        } else {
-                            fileName = "";
-                        }
-                        Search.searchForFile(fileName, isAbsolute);
-                        break;
-                    case "create", "open", "modify":
-                        execOptionUntilSuccessful(isAbsolute, mainOption, null);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + mainOption);
-                }
+                execOptionUntilSuccessful(isAbsolute, mainOption, null);
             }
         }
     }
@@ -131,7 +117,8 @@ public class Main {
         Map <String, BiFunction<String, Boolean, Boolean>> optionToExec = Map.of(
                 "create", Create::createFile,
                 "open", Open::openFile,
-                "modify", Modify::modifyFile
+                "modify", Modify::modifyFile,
+                "search", Search::searchForFile
         );
 
         BiFunction<String, Boolean, Boolean> method = optionToExec.get(mainOption);
@@ -141,17 +128,25 @@ public class Main {
         boolean successful; // this is false if the operation is unsuccessful due to error, or the file is not found at fileName location
         do {
             String fileName = "";
+
+            // always add the current directory if given (passed by calls within DirectoryNavigator.java)
             if (currNavDir != null) {
                 fileName += currNavDir;
             }
 
-            if (!isAbsolute || currNavDir != null) {
-                fileName += UserInput.getFileNameInput();
-            } else {
-                fileName += UserInput.getAbsolutePathInput();
+            // special case: if main option is search, and we are executing in the program's default folder (isAbsolute is false)
+            // or we are executing in a given directory from the DirectoryNavigator (currNavDir is not empty),
+            // then we must not add a subdirectory name. We just execute the option where given
+            if (!(mainOption.equals("search") && (!isAbsolute || currNavDir != null))) {
+                if (!isAbsolute || currNavDir != null) {
+                    fileName += UserInput.getFileNameInput();
+                } else {
+                    fileName += UserInput.getAbsolutePathInput();
+                }
             }
 
-            if (fileName.contains("*")) { // when an operation is cancelled we return out this method, and back to the previous menu.
+            // when an operation is cancelled we return out this method, and back to the previous menu.
+            if (fileName.contains("*")) {
                 System.out.println("Operation cancelled.");
                 Main.delay();
                 return;

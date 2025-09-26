@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.function.BiFunction;
 
 public class Main {
+    /* We use a single Scanner throughout the entire program to handle user input.
+    * We need to be able to access the defaultPath when handling operations in the default program folder "output". */
     private static final Scanner scanner = new Scanner(System.in);
     private static String defaultPath;
     private static final String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
@@ -11,17 +13,6 @@ public class Main {
             "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
             "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to search for an existing file/folder",
             "Input '0' if you would like to exit\n", "Please input an option: "};
-
-    /*
-    todo next time
-        implement file search option
-        should only work with folders
-        requests a name of a folder/file
-        uses depth search to find it
-        system to list duplicates and request user to input which one they want to open
-        if the folder/file is found or a duplicate is specified
-            list of main options for that file/folder (read/run or modify)
-     */
 
     /*
     todo before finishing the project
@@ -32,19 +23,32 @@ public class Main {
         add comments and javadoc comments (can right click on method name and generate javadoc)
      */
 
+    /**
+     * Starts up the main menu.
+     * Also figures out the default file path through the working directory.
+     *
+     * @param args Standard main method command-line arguments
+     */
     public static void main(String[] args) {
+        /* creating a file object will automatically configure the absolute path to the current working directory
+        * therefore by appending it with the "output" subdirectory, we can get the default program folder's location */
         File file = new File("");
-        defaultPath = file.getAbsolutePath() + "\\output\\"; // default path for files
+        defaultPath = file.getAbsolutePath() + "\\output\\";
 
         mainMenu();
     }
 
+    /**
+     * Displays the main menu options and handles user inputs into the menu.
+     */
     public static void mainMenu() {
         for (String line : mainMenuText) {
             System.out.println(line);
         }
 
         while (true) {
+            /* all inputs in this program are retrieved using nextLine() in order to prevent an input like "1 1 1" from being processed as separate tokens.
+            * additionally it prevents the need of a try-catch block for InputMismatchException, if using nextInt */
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
@@ -65,12 +69,17 @@ public class Main {
                     break;
                 default:
                     System.out.println("Invalid input. Please try again");
+                    delay();
             }
         }
     }
 
+    /**
+     * Displays the suboptions menu and handles user inputs into the menu.
+     *
+     * @param mainOption the main option selected from the main menu.
+     */
     public static void subOptionMenu(String mainOption) {
-        String fileName;
         boolean isAbsolute = false;
         boolean exited = false;
         boolean navMenuUsed;
@@ -81,17 +90,22 @@ public class Main {
 
             String input = scanner.nextLine().trim();
             switch (input) {
+                // executing the operation in the default program folder "output"
                 case "1":
-                    // this is initialised as false but we need to set it to false regardless as if we option "2" eventually we will return back to this menu and isAbsolute will still be set to true
+                    /* this is initialised as false but we need to set it to false regardless, as this is in a loop and if
+                    * you were to execute case "2", then go back to case "1", we would need to reset isAbsolute back to false  */
                     isAbsolute = false;
                     break;
+                // executing the operation via an inputted absolute file path
                 case "2":
                     isAbsolute = true;
                     break;
+                // executing the operation by finding the appropriate directory via the directory navigator system
                 case "3":
                     DirectoryNavigator.navigateDirs(mainOption, getDefaultPath());
                     navMenuUsed = true;
                     break;
+                // exiting the sub options menu, and returning to the main menu
                 case "0":
                     reprintMainMenuOptions();
                     exited = true;
@@ -101,19 +115,27 @@ public class Main {
                     delay();
                     continue;
             }
-
-
+            
+            /* if we are not using the DirectoryNavigator to execute our option, or if we haven't selected to leave this menu
+            * then we must execute our option */
             if (!exited && !navMenuUsed) {
                 execOptionUntilSuccessful(isAbsolute, mainOption, null);
             }
         }
     }
 
+    /**
+     * Executes the given {@code mainOption} until successful or an input is given to cancel the operation.
+     *
+     * @param isAbsolute whether you are inputting a relative file path (relative to the program's default directory "output") or if you are inputting an absolute file path
+     * @param mainOption the main option selected from the main menu
+     * @param currNavDir the current directory you are looking at in the directory navigator system (passed as null by default, unless called by DirectoryNavigator.java)
+     */
     public static void execOptionUntilSuccessful(boolean isAbsolute, String mainOption, String currNavDir) {
-        /*
-        this map allows the appropriate method to be called based on the param mainOption,
-        alternatively you could use a switch case statement, but you would need two switch cases which would be ugly and stupid and boring
-         */
+        /* this map allows the appropriate method to be called based on the param mainOption,
+        * alternatively you could use a switch statement, but you would need several switch statements,
+        * and all sets of switch statements would need to expand everytime you added a new main option, 
+        * however, this can cause some strange special cases */
         Map <String, BiFunction<String, Boolean, Boolean>> optionToExec = Map.of(
                 "create", Create::createFile,
                 "open", Open::openFile,
@@ -123,29 +145,13 @@ public class Main {
 
         BiFunction<String, Boolean, Boolean> method = optionToExec.get(mainOption);
 
-        //System.out.println(Thread.currentThread().getStackTrace()[2].getClassName());
-
-        boolean successful; // this is false if the operation is unsuccessful due to error, or the file is not found at fileName location
+        /* this is false if the operation is unsuccessful due to error, the file not being found (when opening, modifying and searching),
+        * or if the file already exists (when creating) */
+        boolean successful;
         do {
-            String fileName = "";
+            String fileName = setupFileName(isAbsolute, mainOption, currNavDir);
 
-            // always add the current directory if given (passed by calls within DirectoryNavigator.java)
-            if (currNavDir != null) {
-                fileName += currNavDir;
-            }
-
-            // special case: if main option is search, and we are executing in the program's default folder (isAbsolute is false)
-            // or we are executing in a given directory from the DirectoryNavigator (currNavDir is not empty),
-            // then we must not add a subdirectory name. We just execute the option where given
-            if (!(mainOption.equals("search") && (!isAbsolute || currNavDir != null))) {
-                if (!isAbsolute || currNavDir != null) {
-                    fileName += UserInput.getFileNameInput();
-                } else {
-                    fileName += UserInput.getAbsolutePathInput();
-                }
-            }
-
-            // when an operation is cancelled we return out this method, and back to the previous menu.
+            // when an operation is cancelled we return out of this method, bringing us back to the previous suboption menu
             if (fileName.contains("*")) {
                 System.out.println("Operation cancelled.");
                 Main.delay();
@@ -156,6 +162,39 @@ public class Main {
         } while (!successful);
     }
 
+    /**
+     * Helper method to prepend and append the correct parameters and inputs to form the appropriate file name.
+     *
+     * @param isAbsolute whether you are inputting a relative file path (relative to the program's default directory "output") or if you are inputting an absolute file path
+     * @param mainOption the main option selected from the main menu
+     * @param currNavDir the current directory you are looking at in the directory navigator system (passed as null by default, unless called by DirectoryNavigator.java)
+     * @return The appropriately formatted file name for the specific operation to be executed
+     */
+    private static String setupFileName(boolean isAbsolute, String mainOption, String currNavDir) {
+        String fileName = "";
+
+        // always add the current directory if given (passed by calls within DirectoryNavigator.java)
+        if (currNavDir != null) {
+            fileName += currNavDir;
+        }
+
+        // special case: if main option is search, and we are executing in the program's default folder (isAbsolute is false)
+        // or we are executing in a given directory from the DirectoryNavigator (currNavDir is not empty),
+        // then we must not add a subdirectory name. We just execute the option where given
+        if (!(mainOption.equals("search") && (!isAbsolute || currNavDir != null))) {
+            if (!isAbsolute || currNavDir != null) {
+                fileName += UserInput.getFileNameInput();
+            } else {
+                fileName += UserInput.getAbsolutePathInput();
+            }
+        }
+        return fileName;
+    }
+
+
+    /**
+     * This method reprints the main menu text, upon exiting from a suboption menu, however, it skips the introductory 3 lines, only requesting and displaying input options.
+     */
     public static void reprintMainMenuOptions() {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
@@ -164,8 +203,13 @@ public class Main {
         }
     }
 
-    // todo - these suboptions are phrased wierdly, maybe add a case statement that changes the print statements more, e.g: when passing search option 2 and 3 should say "folder" instead of "file"
+    // todo - these suboptions are phrased weirdly, maybe add a case statement that changes the print statements more, e.g: when passing search option 2 and 3 should say "folder" instead of "file"
 
+    /**
+     * This method prints the suboptions, substituting the verb with the appropriate {@code mainOption}.
+     *
+     * @param mainOption the main option selected from the main menu
+     */
     public static void printSubOptions(String mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
@@ -177,6 +221,10 @@ public class Main {
         System.out.println("Please input an option: ");
     }
 
+    /**
+     * This program creates a {@code Thread} that sleeps for 1.5 seconds (1500 milliseconds).
+     * Used to create a time window where printed messages can be read by the user, before the program continues.
+     */
     public static void delay() {
         try {
             Thread.sleep(1500);
@@ -184,11 +232,21 @@ public class Main {
             throw new RuntimeException(ex);
         }
     }
-    
+
+    /**
+     * This method retrieves the default program directory ("output" folder), a location that can be used as the destination for the program's operations.
+     *
+     * @return the absolute file path of the default program folder
+     */
     public static String getDefaultPath() {
         return defaultPath;
     }
 
+    /**
+     * This method retrieves the {@code Scanner} that is used across the entirety of the program
+     *
+     * @return the pre-instantiated {@code Scanner} object
+     */
     public static Scanner getScanner() {
         return scanner;
     }

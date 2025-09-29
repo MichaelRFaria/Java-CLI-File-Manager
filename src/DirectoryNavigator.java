@@ -108,7 +108,7 @@ public class DirectoryNavigator {
                     break;
                 // exiting the directory navigator
                 case "~":
-                    return null;
+                    return "exit";
                 /* inputting a subdirectory name
                 * we assume an input that does not match any case, is the name of a subdirectory we want to enter */
                 default:

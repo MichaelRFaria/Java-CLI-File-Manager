@@ -15,7 +15,7 @@ public class UserInput {
 
             /* a single '*' is the input required to cancel the current operation
             * what to do following a cancelled operation is handled in the individual classes themselves as it can vary */
-            if (input.equals("*")) {
+            if (input.contains("*")) {
                 return input;
             /* input must use valid characters for a Windows system file, must be shorter than the max file name length (255),
             * must not end with a leading space, and can contain a '.' (for file extensions), but must not end with it */
@@ -42,7 +42,7 @@ public class UserInput {
 
             /* a single '*' is the input required to cancel the current operation
              * what to do following a cancelled operation is handled in the individual classes themselves as it can vary */
-            if (input.equals("*")) {
+            if (input.contains("*")) {
                 return input;
             }
 

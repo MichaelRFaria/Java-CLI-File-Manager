@@ -267,8 +267,6 @@ public class Modify {
             return;
         }
 
-        boolean exited = false;
-
         // we loop until the user decides to stop editing the file, in which they will return from the method
         while (true) {
             /* we open the text file in order to show what the current contents of the file are
@@ -276,8 +274,8 @@ public class Modify {
             Open.openFile(file.getAbsolutePath(), true);
 
             System.out.println("\nNow please input one of the following: ");
-            System.out.println("Input '1' if you would like to write a new line to the file");
-            System.out.println("Input '2' if you would like to remove the previous line from the file");
+            System.out.println("Input '1' if you would like to write lines to the file");
+            System.out.println("Input '2' if you would like to remove a number of lines from the file");
             System.out.println("Input '3' if you would like to add a line break to the file");
             System.out.println("Input '4' if you would like to clear the file");
             System.out.println("Input '0' if you would like to stop editing the file");
@@ -287,24 +285,54 @@ public class Modify {
 
             try {
                 switch (input) {
-                    // writing a new line
+                    // writing lines to the file
                     case "1":
-                        System.out.print("Enter your line to add: ");
-                        input = Main.getScanner().nextLine(); // not trimmed in case the user wants leading spaces for some reason
+                        System.out.println("Enter your lines to add ('*' to finish writing): ");
 
-                        // try-with-resources syntax, to use AutoCloseable and remove the mandatory catch block
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath(), true))) {
-                            // append the input, move to the next line, flush the input stream
-                            writer.append(input);
-                            writer.newLine();
-                            writer.flush();
+                        try {
+                            BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath(), true));
+
+                            while (true) {
+                                input = Main.getScanner().nextLine(); // not trimmed in case the user wants leading spaces for some reason
+
+                                // exit condition
+                                if (input.equals("*")) {
+                                    break;
+                                }
+
+                                // append the input, then move to the next line
+                                writer.append(input);
+                                writer.newLine();
+                            }
+
+                            writer.close();
+                            System.out.println("Writing lines to the file...");
+
+                        } catch (IOException e) {
+                            System.out.println("Writer could not be opened. Please try again.");
                         }
 
                         Main.delay();
                         break;
-                    // removing the last line
+                    // removing lines from the file
                     case "2":
-                        System.out.println("Removing last line from the file...");
+                        System.out.print("Enter how many lines you want to remove: ");
+                        input = Main.getScanner().nextLine().trim();
+
+                        /* all inputs in this program are retrieved using nextLine() in order to prevent an input like "1 1 1" from being processed as separate tokens.
+                         * additionally it prevents the need of a try-catch block for InputMismatchException, if using nextInt.
+                         * but in this case since we are working on the value of the input, we must parse it as an int afterward */
+                        int linesToRemove;
+
+                        try {
+                            linesToRemove = Integer.parseInt(input);
+                        // if you enter a non-integer, it loops again, requesting another input.
+                        } catch (NumberFormatException e) {
+                            System.out.println("Please enter an integer option.");
+                            Main.delay();
+                            break;
+                        }
+
                         /* we read the lines of text and add them to an array,
                         * as we will be clearing the contents of the file and rewriting certain lines back */
                         Scanner reader = new Scanner(file);
@@ -314,14 +342,22 @@ public class Modify {
                             lines.add(reader.nextLine());
                         }
 
-                        /* try-with-resources syntax, to use AutoCloseable and remove the mandatory catch block
-                        * we open FileWriter without append mode, automatically clearing the file */
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {
-                            // we rewrite all the lines of text back, except the last
-                            for (int i = 0; i < lines.size() - 1; i++) {
-                                writer.write(lines.get(i));
-                                writer.newLine();
+                        /* if the number of lines in the file exceeds the number of lines we are attempting to remove
+                        * then we will remove that amount of lines */
+                        if (lines.size() >= linesToRemove) {
+                            System.out.println("Removing lines from the file...");
+                            /* try-with-resources syntax, to use AutoCloseable and remove the mandatory catch block
+                             * we open FileWriter without append mode, automatically clearing the file */
+                            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {
+                                // we rewrite all the lines of text back, except the last
+                                for (int i = 0; i < lines.size() - linesToRemove; i++) {
+                                    writer.write(lines.get(i));
+                                    writer.newLine();
+                                }
                             }
+                        // otherwise, we cannot remove any lines from the file
+                        } else {
+                            System.out.println("Invalid amount of lines.");
                         }
 
                         /* we close the reader to prevent it from "locking" the file,

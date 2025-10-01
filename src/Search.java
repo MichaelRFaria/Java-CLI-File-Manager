@@ -6,9 +6,8 @@ public class Search {
     /**
      * The method to search for a file.
      *
-     * @param fileName the name of the file/folder you want to search for, either given by a relative file path (lone file name),
-     *                 or an absolute file path, differentiated by the {@code isAbsolute} parameter.
-     * @param isAbsolute whether you have inputted a relative file path (relative to the program's default directory "output") or an absolute file path.
+     * @param fileName the directory in which you want to search in.
+     * @param isAbsolute whether you have inputted you are searching in the default "output" folder, or an inputted absolute file path.
      * @return Whether the file was successfully found (and any operation executed on a search result was also successfully)
      *          or not (impossible file location given).
      */

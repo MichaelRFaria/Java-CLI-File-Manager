@@ -143,7 +143,7 @@ public class DirectoryNavigator {
 
         String textViewType;
 
-        // filtering the contents of the directory shown and figuring out what the view type is so we can display it (textViewType)
+        // filtering the contents of the directory shown and figuring out what the view type is, so we can display it (textViewType)
 
         // displaying both files and folders.
         /* this is what is shown by default, so we don't actually need to do anything,
@@ -224,13 +224,42 @@ public class DirectoryNavigator {
 
         System.out.println("\nPage " + currentPage + " of " + pageCount);
 
-        // printing the menu controls, along with the correct verb based on what we are attempting to execute
-        System.out.println("Input a subdirectory name to enter a subdirectory, '$' to " + mainOption + " a file/folder in this directory, '!' to switch between viewing folders, files or both, " +
-                "\n'^' to exit the current directory, '<','<<' and '>','>>' to navigate between pages, and '~' to exit the back to the sub menu.");
+        // figuring out how to phrase the action we are able to execute based on mainOption
+        String action = getActionMessage(mainOption);
 
-        /*
-        TODO
-            when opening/running, moving files,the above message should say "...'$' to " + mainOption + " a FILE in this directory..." (should not say folder)
-         */
+        // printing the menu controls, along with the correct action based on what we are attempting to execute
+        System.out.println("Input a subdirectory name to enter a subdirectory, " + action + "'!' to switch between viewing folders, files or both, " +
+                "\n'^' to exit the current directory, '<','<<' and '>','>>' to navigate between pages, and '~' to exit the back to the sub menu.");
+    }
+
+    /**
+     * The method to generate the appropriate input option message, based on the {@code mainOption} parameter.
+     *
+     * @param mainOption the name of the operation we are executing.
+     * @return the message of the operation we are executing.
+     */
+    private static String getActionMessage(String mainOption) {
+        String action;
+
+        /* if we have entered the path/name of a folder into the open operation,
+        then we are just viewing the contents of the folder and are not executing any option */
+        if (mainOption.equals("view")) {
+            action = "";
+        /* otherwise we need to print the appropriate message we are navigating the directories to execute
+        * "move" is a special case, as we can only move files, so we say "file" instead of "file/folder"
+        * "open" is also a special case as realistically we should only be able to open files, so we also say "file" instead of "file/folder",
+        * this is because opening a folder would just open this DirectoryNavigator system again, though it's technically allowed.
+        * we could just have two else if's but that is lame and this is shorter */
+        } else if (mainOption.equals("move") || mainOption.equals("open")) {
+            // we use a ternary operator to get the correct preposition
+            action = "'$' to " + mainOption + " a file " + ((mainOption.equals("move")) ? "into" : "in") + " this directory,";
+        /* remaining options are create, search, modify
+        * search is a special case as without "for" the sentence is grammatically incorrect.
+        * we could just have two else if's but that is lame and this is shorter */
+        } else {
+            // we use a ternary operator to get the correct preposition
+            action = "'$' to " + mainOption + ((mainOption.equals("search")) ? " for" : "") + " a file/folder in this directory,";
+        }
+        return action;
     }
 }

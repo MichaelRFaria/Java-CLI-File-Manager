@@ -13,23 +13,23 @@ public class Open {
      * @return Whether the file was successfully opened or not (either does not exist, or operation error).
      */
     public static boolean openFile(String fileName, boolean isAbsolute) {
-        /* creating the File object so we can work on the file
+        /* creating the File object, so we can work on the file
         * will be instantiated as false, if the file does not exist */
         File file = FileUtils.createFileVarIfExists(fileName, isAbsolute);
         // we return unsuccessful if the file does not exist.
         if (file == null) {return false; }
 
-        String fileExtension;
+        String fileExtension = "";
         int posOfDot = FileUtils.getActualFileName(file).indexOf('.');
         // if the file has a '.' then we are working on a file, and must extract the file extension to figure out what we are working on
         if (posOfDot != -1) {
             fileExtension = FileUtils.getActualFileName(file).substring(posOfDot + 1);
         // if the file does not have a '.', then we must be working on a folder, which is not possible
-        } else {
+        }/* else {
             System.out.println("We cannot execute or read a folder, please try with a file.");
             Main.delay();
             return false;
-        }
+        } */
 
         /*
         todo
@@ -92,6 +92,10 @@ public class Open {
                     e.printStackTrace();
                     return false;
                 }
+            // opening a folder
+            case "":
+                DirectoryNavigator.navigateDirs("view", file.getAbsolutePath());
+                return true;
             default:
                 System.out.println("This program is not able to work on files with the " + fileExtension + " file extension.");
                 Main.delay();

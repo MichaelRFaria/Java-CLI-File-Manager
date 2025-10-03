@@ -3,9 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DirectoryNavigator {
-        /* TODO - could add option to increase and reduce the number of pages that are shown at a time,
-            displayedFilesCount = some default input, then prompt the user for an input on how many files to show
-            will need to update appropriate contents too */
 
     /**
      * This method allows you to navigate directories on your system via the console, in order to easily find a location to execute one of the program's operations.
@@ -28,13 +25,15 @@ public class DirectoryNavigator {
         int currentPage = 1;
         // viewType acts as a filter for what directory contents are shown: 1 = both folders and files, 2 = folders, 3 = files
         int viewType = 1;
+        // how many files are to be displayed per page, 5 by default
+        int filesPerPage = 5;
 
         /* loops until either a move operation is complete, where it will return the directory location to move the file to as a string to be used in Modify.moveFile,
         * or until you select the exit option, where the method returns null */
         while (true) {
             /* we update the menu after any of the options are executed as we need to display new files when creating and renaming,
              * and when changing pages, filtering the types of files shown, etc */
-            updateNavigationMenu(viewType, currentPage, directoryContents, navigate.getAbsolutePath(), mainOption);
+            updateNavigationMenu(viewType, currentPage, filesPerPage, directoryContents, navigate.getAbsolutePath(), mainOption);
 
             String input = Main.getScanner().nextLine().trim();
 
@@ -92,9 +91,9 @@ public class DirectoryNavigator {
                 case ">":
                     /* ceiling division to ensure the current page does not exceed the maximum number of pages
                     * that can be formed given the number of directoryContents.
-                    * e.g: we have 16 files, and show 5 files per page.
+                    * e.g: we have 16 files, and show 5 files per pages (by default)
                     * 16 / 5 = 3.2 pages, rounded up to 4 pages (as we can display the remainder of the files on an extra page) */
-                    if (currentPage < Math.ceil((double) directoryContents.length / 5)) {
+                    if (currentPage < Math.ceil((double) directoryContents.length / filesPerPage)) {
                         currentPage++;
                     }
                     break;
@@ -102,9 +101,35 @@ public class DirectoryNavigator {
                 case ">>":
                     /* ceiling division to ensure the current page does not exceed the maximum number of pages
                     * that can be formed given the number of directoryContents. */
-                    if (currentPage < Math.ceil((double) directoryContents.length / 5)) {
-                        currentPage = (int) Math.ceil((double) directoryContents.length / 5);
+                    if (currentPage < Math.ceil((double) directoryContents.length / filesPerPage)) {
+                        currentPage = (int) Math.ceil((double) directoryContents.length / filesPerPage);
                     }
+                    break;
+                // changing how many files are displayed per page
+                case "%":
+                    System.out.print("Currently displaying " + filesPerPage + " files per page. Enter the new number of files to display per page: ");
+                    input = Main.getScanner().nextLine().trim();
+
+                    /* all inputs in this program are retrieved using nextLine() in order to prevent an input like "1 1 1" from being processed as separate tokens.
+                     * additionally it prevents the need of a try-catch block for InputMismatchException, if using nextInt.
+                     * but in this case since we are working on the value of the input, we must parse it as an int afterward */
+                    int newFilesPerPage;
+
+                    try {
+                        newFilesPerPage = Integer.parseInt(input);
+                        // if you enter a non-integer, it loops again, requesting another input.
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please enter an integer option.");
+                        Main.delay();
+                        break;
+                    }
+
+                    if (newFilesPerPage > 0) {
+                        filesPerPage = newFilesPerPage;
+                    } else {
+                        System.out.println("Invalid number of files to display");
+                    }
+                    Main.delay();
                     break;
                 // exiting the directory navigator
                 case "~":
@@ -138,7 +163,7 @@ public class DirectoryNavigator {
      * @param currDirPath the absolute file path of the directory that will be displayed.
      * @param mainOption the name of the operation we are executing in the directory.
      */
-    public static void updateNavigationMenu(int viewType, int currentPage, File[] directoryContents, String currDirPath, String mainOption) {
+    public static void updateNavigationMenu(int viewType, int currentPage, int filesPerPage, File[] directoryContents, String currDirPath, String mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         String textViewType;
@@ -204,9 +229,9 @@ public class DirectoryNavigator {
         System.out.println("Currently viewing the " + textViewType + " of: " + directoryPath + "\n");
 
         // displaying only the contents for the current page
-        int i = (currentPage - 1) * 5;
+        int i = (currentPage - 1) * filesPerPage;
 
-        while (i < (currentPage * 5) && i < directoryContents.length) {
+        while (i < (currentPage * filesPerPage) && i < directoryContents.length) {
             System.out.println(directoryContents[i].getName());
             i++;
         }
@@ -219,7 +244,7 @@ public class DirectoryNavigator {
             System.out.println("The current directory has no " + textViewType + "!");
             pageCount = 1;
         } else {
-            pageCount = (int) Math.ceil((double) directoryContents.length / 5);
+            pageCount = (int) Math.ceil((double) directoryContents.length / filesPerPage);
         }
 
         System.out.println("\nPage " + currentPage + " of " + pageCount);
@@ -228,8 +253,8 @@ public class DirectoryNavigator {
         String action = getActionMessage(mainOption);
 
         // printing the menu controls, along with the correct action based on what we are attempting to execute
-        System.out.println("Input a subdirectory name to enter a subdirectory, " + action + "'!' to switch between viewing folders, files or both, " +
-                "\n'^' to exit the current directory, '<','<<' and '>','>>' to navigate between pages, and '~' to exit the back to the sub menu.");
+        System.out.println("Input a subdirectory name to enter a subdirectory, " + action + "'!' to switch between viewing folders, files or both, '^' to exit the current directory," +
+                "\n '<','<<' and '>','>>' to navigate between pages, '%' to change how many files are shown per page, and '~' to exit the back to the sub menu.");
     }
 
     /**

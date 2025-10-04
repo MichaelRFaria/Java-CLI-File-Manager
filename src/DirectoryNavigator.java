@@ -154,55 +154,15 @@ public class DirectoryNavigator {
     public static void updateNavigationMenu(int viewType, int currentPage, int filesPerPage, File[] directoryContents, String currDirPath, String mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
-        String textViewType;
+        // figuring out what the view type is, so we can display it on screen
+        String textViewType = switch (viewType) {
+            case 1 -> "folders and files";
+            case 2 -> "folders";
+            default -> "files";
+        };
 
-        // filtering the contents of the directory shown and figuring out what the view type is, so we can display it (textViewType)
-
-        // displaying both files and folders.
-        /* this is what is shown by default, so we don't actually need to do anything,
-        * but we display the contents in alphabetical order with folders shown before files for convenience */
-        if (viewType == 1) {
-            textViewType = "folders and files";
-            int i = 0;
-            File[] updatedDirectoryContents = new File[directoryContents.length];
-
-            // the directoryContents array is already ordered alphabetically, so all we need to do is add the folders to a new array in order, then add the files to the new array in order
-            // adding the folders to the new array
-            for (File file : directoryContents) {
-                if (file.isDirectory()) {
-                    updatedDirectoryContents[i] = file;
-                    i++;
-                }
-            }
-
-            // adding the files to the new array
-            for (File file : directoryContents) {
-                if (file.isFile()) {
-                    updatedDirectoryContents[i] = file;
-                    i++;
-                }
-            }
-
-            directoryContents = updatedDirectoryContents;
-        } else {
-            // converting array into ArrayList so that folders/files can be removed
-            ArrayList<File> updatedDirectoryContents = new ArrayList<>(Arrays.asList(directoryContents));
-
-            // displaying only folders
-            if (viewType == 2) {
-                textViewType = "folders";
-                // removing all the files so only folders remain
-                updatedDirectoryContents.removeIf(File::isFile);
-            // displaying only files
-            } else {
-                textViewType = "files";
-                // removing all the folders so only files remain
-                updatedDirectoryContents.removeIf(File::isDirectory);
-            }
-
-            // converting back to array to reassign the new array to the directoryContents variable
-            directoryContents = updatedDirectoryContents.toArray(new File[0]);
-        }
+        // filtering the contents of the directory shown according to the viewType variable
+        directoryContents = filterDirectoryContents(viewType, directoryContents);
 
         // figuring out the directory path so we can display it
         String directoryPath;
@@ -242,6 +202,59 @@ public class DirectoryNavigator {
         // printing the menu controls, along with the correct action based on what we are attempting to execute
         System.out.println("Input a subdirectory name to enter a subdirectory, " + action + "'!' to switch between viewing folders, files or both, '^' to exit the current directory," +
                 "\n '<','<<' and '>','>>' to navigate between pages, '%' to change how many files are shown per page, and '~' to exit the back to the sub menu.");
+    }
+
+    /**
+     * Helper method to filter what contents of the {@code directoryContents} are shown according to the {@code viewType}.
+     *
+     * @param viewType the filter of what files to display.
+     * @param directoryContents the array with all the directory's contents, that will be filtered.
+     * @return the filtered directory contents.
+     */
+    private static File[] filterDirectoryContents(int viewType, File[] directoryContents) {
+        // displaying both files and folders.
+        /* this is what is shown by default, so we don't actually need to do anything,
+         * but we display the contents in alphabetical order with folders shown before files for convenience */
+        if (viewType == 1) {
+            int i = 0;
+            File[] updatedDirectoryContents = new File[directoryContents.length];
+
+            // the directoryContents array is already ordered alphabetically, so all we need to do is add the folders to a new array in order, then add the files to the new array in order
+            // adding the folders to the new array
+            for (File file : directoryContents) {
+                if (file.isDirectory()) {
+                    updatedDirectoryContents[i] = file;
+                    i++;
+                }
+            }
+
+            // adding the files to the new array
+            for (File file : directoryContents) {
+                if (file.isFile()) {
+                    updatedDirectoryContents[i] = file;
+                    i++;
+                }
+            }
+
+            directoryContents = updatedDirectoryContents;
+        } else {
+            // converting array into ArrayList so that folders/files can be removed
+            ArrayList<File> updatedDirectoryContents = new ArrayList<>(Arrays.asList(directoryContents));
+
+            // displaying only folders
+            if (viewType == 2) {
+                // removing all the files so only folders remain
+                updatedDirectoryContents.removeIf(File::isFile);
+            // displaying only files
+            } else {
+                // removing all the folders so only files remain
+                updatedDirectoryContents.removeIf(File::isDirectory);
+            }
+
+            // converting back to array to reassign the new array to the directoryContents variable
+            directoryContents = updatedDirectoryContents.toArray(new File[0]);
+        }
+        return directoryContents;
     }
 
     /**

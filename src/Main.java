@@ -69,7 +69,7 @@ public class Main {
                     break;
                 default:
                     System.out.println("Invalid input. Please try again");
-                    delay();
+                    Utils.delay();
             }
         }
     }
@@ -112,7 +112,7 @@ public class Main {
                     break;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    delay();
+                    Utils.delay();
                     continue;
             }
             
@@ -154,7 +154,7 @@ public class Main {
             // when an operation is cancelled we return out of this method, bringing us back to the previous suboption menu
             if (fileName.contains("*")) {
                 System.out.println("Operation cancelled.");
-                Main.delay();
+                Utils.delay();
                 return;
             }
 
@@ -219,18 +219,6 @@ public class Main {
         System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file");
         System.out.println("Input '0' if you would like to exit\n");
         System.out.println("Please input an option: ");
-    }
-
-    /**
-     * This program creates a {@code Thread} that sleeps for 1.5 seconds (1500 milliseconds).
-     * Used to create a time window where printed messages can be read by the user, before the program continues.
-     */
-    public static void delay() {
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     /**

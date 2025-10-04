@@ -19,7 +19,7 @@ public class Modify {
 
         /* creating the File object, so we can work on the file
          * will be instantiated as false, if the file does not exist */
-        File file = FileUtils.createFileVarIfExists(fileName, isAbsolute);
+        File file = Utils.createFileVarIfExists(fileName, isAbsolute);
         // we return unsuccessful if the file does not exist.
         if (file == null) {return false; }
 
@@ -59,7 +59,7 @@ public class Modify {
                     return true;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    Main.delay();
+                    Utils.delay();
                     break;
             }
         }
@@ -77,9 +77,9 @@ public class Modify {
 
         /* checking if the file object represents a file, in which we need the correct file extension
         * if the file name has a dot, then we must be handling a file and not a folder */
-        int posOfDot = FileUtils.getActualFileName(file).lastIndexOf('.');
+        int posOfDot = Utils.getActualFileName(file).lastIndexOf('.');
         if (posOfDot != -1) {
-            fileExtension = FileUtils.getActualFileName(file).substring(posOfDot);
+            fileExtension = Utils.getActualFileName(file).substring(posOfDot);
         }
 
         // getting the path to the file, so we can append the inputted new name of the file to the original path
@@ -92,7 +92,7 @@ public class Modify {
         // when the rename operation is cancelled, we return the original file.
         if (newFileName.contains("*")) {
             System.out.println("Operation cancelled.");
-            Main.delay();
+            Utils.delay();
             return file;
         }
 
@@ -120,7 +120,7 @@ public class Modify {
         System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful. Please try again.");
 
         // delaying to ensure the above message has time to be read
-        Main.delay();
+        Utils.delay();
 
         /* if we are successful we return the newly renamed file
         * if we are unsuccessful we return the original file parameter. */
@@ -140,12 +140,12 @@ public class Modify {
     public static File moveFile(File file) {
         String destination = "";
 
-        int posOfDot = FileUtils.getActualFileName(file).indexOf('.');
+        int posOfDot = Utils.getActualFileName(file).indexOf('.');
         /* we can only move files, if there is not a dot in the file name, then it must be a folder
         * (technically folders can have dots in their names in Windows, but this program does not recognise it that way*/
         if (posOfDot == -1) {
             System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
-            Main.delay();
+            Utils.delay();
             return null;
         }
 
@@ -171,7 +171,7 @@ public class Modify {
                     // if we choose to cancel the move operation, we stop here and return the original file parameter
                     if (destination.contains("*")) {
                         System.out.println("Operation cancelled.");
-                        Main.delay();
+                        Utils.delay();
                         return file;
                     }
 
@@ -185,7 +185,7 @@ public class Modify {
                     // if the input does not lead to a directory, we print a message and continue the loop
                     } else {
                         System.out.println("This directory does not exist, please try again.");
-                        Main.delay();
+                        Utils.delay();
                         continue;
                     }
                 // entering the destination via the directory navigator system
@@ -210,22 +210,22 @@ public class Modify {
                     return file;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    Main.delay();
+                    Utils.delay();
             }
         }
 
         // moving a file works the same way as renaming a file
 
         // we append the actual file name to the destination where the file is to be moved
-        File newFile = new File(destination + "\\" + FileUtils.getActualFileName(file));
-        System.out.println(destination + "\\" + FileUtils.getActualFileName(file));
+        File newFile = new File(destination + "\\" + Utils.getActualFileName(file));
+        System.out.println(destination + "\\" + Utils.getActualFileName(file));
         boolean successful = file.renameTo(newFile);
 
         // printing appropriate message based on if the operation was successful
         System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful. Please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
-        Main.delay();
+        Utils.delay();
         if (successful) {
             return newFile;
         } else {
@@ -246,10 +246,10 @@ public class Modify {
         boolean successful = file.delete();
 
         // printing appropriate message based on if the operation was successful
-        System.out.println(successful ? "Successfully deleted " + FileUtils.getActualFileName(file) : FileUtils.getActualFileName(file) + " could not be deleted. Please try again.");
+        System.out.println(successful ? "Successfully deleted " + Utils.getActualFileName(file) : Utils.getActualFileName(file) + " could not be deleted. Please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
-        Main.delay();
+        Utils.delay();
         return successful;
     }
 
@@ -261,9 +261,9 @@ public class Modify {
     public static void editTextFile(File file) {
         /* if the file does not end in ".txt", it is not a text file, therefore we cannot edit it
         * in this case we simply print an error message and return out of the method */
-        if (!FileUtils.getActualFileName(file).substring(FileUtils.getActualFileName(file).lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
+        if (!Utils.getActualFileName(file).substring(Utils.getActualFileName(file).lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
             System.out.println("This option is only compatible with text files.");
-            Main.delay();
+            Utils.delay();
             return;
         }
 
@@ -312,7 +312,7 @@ public class Modify {
                             System.out.println("Writer could not be opened. Please try again.");
                         }
 
-                        Main.delay();
+                        Utils.delay();
                         break;
                     // removing lines from the file
                     case "2":
@@ -329,7 +329,7 @@ public class Modify {
                         // if you enter a non-integer, it loops again, requesting another input.
                         } catch (NumberFormatException e) {
                             System.out.println("Please enter an integer option.");
-                            Main.delay();
+                            Utils.delay();
                             break;
                         }
 
@@ -363,7 +363,7 @@ public class Modify {
                         /* we close the reader to prevent it from "locking" the file,
                         * which will prevent other operations from being able to execute on the file */
                         reader.close();
-                        Main.delay();
+                        Utils.delay();
                         break;
                     // adding a line break
                     case "3":
@@ -376,7 +376,7 @@ public class Modify {
                             writer.flush();
                         }
 
-                        Main.delay();
+                        Utils.delay();
                         break;
                     // clearing the file
                     case "4":
@@ -390,7 +390,7 @@ public class Modify {
                             // opening FileWriter without append mode, automatically clears the file
                             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {}
 
-                            Main.delay();
+                            Utils.delay();
                         }
                         break;
                     // exiting
@@ -398,7 +398,7 @@ public class Modify {
                         return;
                     default:
                         System.out.println("Please input an option from the list above, try again.");
-                        Main.delay();
+                        Utils.delay();
                         break;
                 }
             } catch (IOException e) {
@@ -414,10 +414,10 @@ public class Modify {
      */
     public static void printSubOptions(File file) {
         // figuring out the correct noun to use for the file (file or folder)
-        String message = FileUtils.getActualFileName(file).contains(".") ? "file" : "folder";
+        String message = Utils.getActualFileName(file).contains(".") ? "file" : "folder";
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-        System.out.println("Now modifying the " + message + ": " + FileUtils.getActualFileName(file) + " located at: " + file.getAbsolutePath() + "\n");
+        System.out.println("Now modifying the " + message + ": " + Utils.getActualFileName(file) + " located at: " + file.getAbsolutePath() + "\n");
         System.out.println("Please input one of the following: ");
         System.out.println("Input '1' if you would like to rename this file");
         System.out.println("Input '2' if you would like to move this file");

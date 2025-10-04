@@ -15,15 +15,15 @@ public class Open {
     public static boolean openFile(String fileName, boolean isAbsolute) {
         /* creating the File object, so we can work on the file
         * will be instantiated as false, if the file does not exist */
-        File file = FileUtils.createFileVarIfExists(fileName, isAbsolute);
+        File file = Utils.createFileVarIfExists(fileName, isAbsolute);
         // we return unsuccessful if the file does not exist.
         if (file == null) {return false; }
 
         String fileExtension = "";
-        int posOfDot = FileUtils.getActualFileName(file).indexOf('.');
+        int posOfDot = Utils.getActualFileName(file).indexOf('.');
         // if the file has a '.' then we are working on a file, and must extract the file extension to figure out what we are working on
         if (posOfDot != -1) {
-            fileExtension = FileUtils.getActualFileName(file).substring(posOfDot + 1);
+            fileExtension = Utils.getActualFileName(file).substring(posOfDot + 1);
         // if the file does not have a '.', then we must be working on a folder, which is not possible
         }/* else {
             System.out.println("We cannot execute or read a folder, please try with a file.");
@@ -76,7 +76,7 @@ public class Open {
                     return true;
                 } catch (FileNotFoundException e) {
                     System.out.println("File was not found, please try again.");
-                    Main.delay();
+                    Utils.delay();
                     return false;
                 }
             case "exe":
@@ -84,8 +84,8 @@ public class Open {
                     // Runtime.getRuntime().exec(...) requires the working directory as it's third parameter, below we are calculating where that is
                     String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\'));
                     Runtime.getRuntime().exec(file.getAbsolutePath(), null, new File(dir));
-                    System.out.println("\nRunning the executable " + FileUtils.getActualFileName(file) + " at: " + file.getAbsolutePath());
-                    Main.delay();
+                    System.out.println("\nRunning the executable " + Utils.getActualFileName(file) + " at: " + file.getAbsolutePath());
+                    Utils.delay();
                     return true;
                 } catch (IOException e) {
                     System.out.println("an error occurred when starting the .exe");
@@ -98,7 +98,7 @@ public class Open {
                 return true;
             default:
                 System.out.println("This program is not able to work on files with the " + fileExtension + " file extension.");
-                Main.delay();
+                Utils.delay();
                 return false;
         }
     }

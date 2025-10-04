@@ -1,6 +1,17 @@
 import java.io.File;
 
-public class FileUtils {
+public class Utils {
+    /**
+     * This program creates a {@code Thread} that sleeps for 1.5 seconds (1500 milliseconds).
+     * Used to create a time window where printed messages can be read by the user, before the program continues.
+     */
+    public static void delay() {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
     /**
      * This method creates a {@code File} object for a file that exists at a given location.
@@ -28,7 +39,7 @@ public class FileUtils {
         File file = new File(fullFileName);
         if (!file.exists()) {
             System.out.println("The " + message + " was not found, please try again.");
-            Main.delay();
+            delay();
             return null;
         }
         return file;

@@ -120,7 +120,7 @@ public class DirectoryNavigator {
                         // if you enter a non-integer, it loops again, requesting another input.
                     } catch (NumberFormatException e) {
                         System.out.println("Please enter an integer option.");
-                        Main.delay();
+                        Utils.delay();
                         break;
                     }
 
@@ -129,7 +129,7 @@ public class DirectoryNavigator {
                     } else {
                         System.out.println("Invalid number of files to display");
                     }
-                    Main.delay();
+                    Utils.delay();
                     break;
                 // exiting the directory navigator
                 case "~":
@@ -147,7 +147,7 @@ public class DirectoryNavigator {
                     // otherwise, we inform the user that no subdirectory was found
                     } else {
                         System.out.println("There is no subdirectory with the inputted name. Please try again.");
-                        Main.delay();
+                        Utils.delay();
                     }
                     break;
             }

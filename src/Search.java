@@ -15,7 +15,7 @@ public class Search {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         // creating a file variable that we can work on located at the directory chosen
-        File file = FileUtils.createFileVarIfExists(fileName, isAbsolute);
+        File file = Utils.createFileVarIfExists(fileName, isAbsolute);
 
         // if the file variable is null, then the given directory does not exist and we cannot continue
         if (file == null) {
@@ -23,7 +23,7 @@ public class Search {
         // we can only search within directories, we cannot search within an actual file
         } else if (!file.isDirectory()) {
             System.out.println("You must give a file directory to search for a file/folder in.");
-            Main.delay();
+            Utils.delay();
             return false;
         }
 
@@ -47,7 +47,7 @@ public class Search {
             * if entering the directory to search in via an absolute path or the directory navigator system */
             if (input.contains("*")) {
                 System.out.println("Operation cancelled.");
-                Main.delay();
+                Utils.delay();
                 return true;
             }
 
@@ -64,7 +64,7 @@ public class Search {
                     // iterating through file objects within the list of directory contents
                     for (File subFile : subFiles) {
                         // if the file/folder name matches the name we are looking for add it to the list
-                        if (FileUtils.getActualFileName(subFile).equals(input)) {
+                        if (Utils.getActualFileName(subFile).equals(input)) {
                             matchingFiles.add(subFile);
                         }
 
@@ -121,7 +121,7 @@ public class Search {
         * which will cause them to be prompted to enter another file name to search */
         } else {
             System.out.println("\nNo " + fileType + "s called " + matchingString + " were found. Please try again.");
-            Main.delay();
+            Utils.delay();
             return false;
         }
     }
@@ -159,7 +159,7 @@ public class Search {
                     return;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    Main.delay();
+                    Utils.delay();
                     break; // loops
             }
         }
@@ -183,25 +183,24 @@ public class Search {
 
             try {
                 choice = Integer.parseInt(input);
-
             // if you enter a non-integer, it loops again, requesting another input.
             } catch (NumberFormatException e) {
                 System.out.println("Please enter an integer option. Try again.");
-                Main.delay();
+                Utils.delay();
                 continue;
             }
 
             // if you enter a non-positive integer, it loops again, requesting another input.
             if (choice <= 0) {
                 System.out.println("Invalid search result, please input an integer between 1 and " + results.size() + ".");
-                Main.delay();
+                Utils.delay();
                 continue;
             }
 
             switch (option) {
                 case "open":
                     // choice of file must match one of the options given AND we must not be trying to execute this on a folder
-                    if (choice <= results.size() && FileUtils.getActualFileName(results.get(choice - 1)).contains(".")) {
+                    if (choice <= results.size() && Utils.getActualFileName(results.get(choice - 1)).contains(".")) {
                         Open.openFile(results.get(choice - 1).getAbsolutePath(), true);
                         return;
                     }

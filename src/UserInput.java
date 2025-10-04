@@ -23,7 +23,7 @@ public class UserInput {
                 return input;
             } else {
                 System.out.println("File name input is invalid. Please try again.");
-                Main.delay();
+                Utils.delay();
             }
         }
     }
@@ -52,7 +52,7 @@ public class UserInput {
                 return input;
             } else {
                 System.out.println("File path is entered incorrectly. Please try again.");
-                Main.delay();
+                Utils.delay();
             }
         }
     }

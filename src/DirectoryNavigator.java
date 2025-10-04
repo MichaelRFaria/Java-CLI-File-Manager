@@ -110,26 +110,14 @@ public class DirectoryNavigator {
                     System.out.print("Currently displaying " + filesPerPage + " files per page. Enter the new number of files to display per page: ");
                     input = Main.getScanner().nextLine().trim();
 
-                    /* all inputs in this program are retrieved using nextLine() in order to prevent an input like "1 1 1" from being processed as separate tokens.
-                     * additionally it prevents the need of a try-catch block for InputMismatchException, if using nextInt.
-                     * but in this case since we are working on the value of the input, we must parse it as an int afterward */
-                    int newFilesPerPage;
+                    // returns parsed integer or -1 on invalid input
+                    int newFilesPerPage = Utils.handleParsingInput(input);
 
-                    try {
-                        newFilesPerPage = Integer.parseInt(input);
-                        // if you enter a non-integer, it loops again, requesting another input.
-                    } catch (NumberFormatException e) {
-                        System.out.println("Please enter an integer option.");
-                        Utils.delay();
-                        break;
-                    }
-
-                    if (newFilesPerPage > 0) {
+                    // if the input is valid, we update how many files are displayed per page to the input
+                    if (newFilesPerPage != -1) {
                         filesPerPage = newFilesPerPage;
-                    } else {
-                        System.out.println("Invalid number of files to display");
                     }
-                    Utils.delay();
+
                     break;
                 // exiting the directory navigator
                 case "~":
@@ -214,7 +202,6 @@ public class DirectoryNavigator {
 
             // converting back to array to reassign the new array to the directoryContents variable
             directoryContents = updatedDirectoryContents.toArray(new File[0]);
-
         }
 
         // figuring out the directory path so we can display it

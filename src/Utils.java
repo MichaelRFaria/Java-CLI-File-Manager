@@ -2,7 +2,41 @@ import java.io.File;
 
 public class Utils {
     /**
-     * This program creates a {@code Thread} that sleeps for 1.5 seconds (1500 milliseconds).
+     * Helper method to parse a {@code String} input, taken from the {@code Scanner}, into an int so it can be worked on.
+     * Only accepts positive integers.
+     * On an invalid input provides an appropriate error message.
+     *
+     * @param input the {@code String} input you want to parse into an int.
+     * @return either a positive integer when successful or -1 on failure.
+     */
+    public static int handleParsingInput(String input) {
+        /* all inputs in this program are retrieved using nextLine() in order to prevent an input like "1 1 1" from being processed as separate tokens.
+         * additionally it prevents the need of a try-catch block for InputMismatchException, if using nextInt.
+         * however if we want to work on the value, we must parse it. */
+
+        int parsedVal;
+
+        try {
+            parsedVal = Integer.parseInt(input);
+
+            if (parsedVal <= 0) {
+                System.out.println("Please enter a positive integer.");
+                Utils.delay();
+                // we return -1, which the caller will evaluate and handle the failure
+                return -1;
+            } else {
+                return parsedVal;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter an integer.");
+            Utils.delay();
+            // we return -1, which the caller will evaluate and handle the failure
+            return -1;
+        }
+    }
+
+    /**
+     * This method creates a {@code Thread} that sleeps for 1.5 seconds (1500 milliseconds).
      * Used to create a time window where printed messages can be read by the user, before the program continues.
      */
     public static void delay() {

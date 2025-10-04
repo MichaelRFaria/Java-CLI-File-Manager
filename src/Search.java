@@ -176,23 +176,14 @@ public class Search {
             printOptionMessage(option);
             String input = Main.getScanner().nextLine().trim();
 
-            /* all inputs in this program are retrieved using nextLine() in order to prevent an input like "1 1 1" from being processed as separate tokens.
-             * additionally it prevents the need of a try-catch block for InputMismatchException, if using nextInt.
-             * but in this case since we are working on the value of the input, we must parse it as an int afterward */
-            int choice;
+            // returns parsed integer or -1 on invalid input
+            int choice = Utils.handleParsingInput(input);
 
-            try {
-                choice = Integer.parseInt(input);
-            // if you enter a non-integer, it loops again, requesting another input.
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter an integer option. Try again.");
-                Utils.delay();
+            // if you enter an invalid option, it loops again, requesting another input
+            if (choice == -1) {
                 continue;
-            }
-
-            // if you enter a non-positive integer, it loops again, requesting another input.
-            if (choice <= 0) {
-                System.out.println("Invalid search result, please input an integer between 1 and " + results.size() + ".");
+            } else if (choice > results.size()) {
+                System.out.println("Number does not correspond to a search result.");
                 Utils.delay();
                 continue;
             }
@@ -200,18 +191,15 @@ public class Search {
             switch (option) {
                 case "open":
                     // choice of file must match one of the options given AND we must not be trying to execute this on a folder
-                    if (choice <= results.size() && Utils.getActualFileName(results.get(choice - 1)).contains(".")) {
+                    if (Utils.getActualFileName(results.get(choice - 1)).contains(".")) {
                         Open.openFile(results.get(choice - 1).getAbsolutePath(), true);
                         return;
                     }
                     break;
                 case "modify":
                     // choice of file must match one of the options given
-                    if (choice <= results.size()) {
-                        Modify.modifyFile(results.get(choice - 1).getAbsolutePath(), true);
-                        return;
-                    }
-                    break;
+                    Modify.modifyFile(results.get(choice - 1).getAbsolutePath(), true);
+                    return;
             }
         }
     }

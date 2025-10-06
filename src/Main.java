@@ -53,16 +53,16 @@ public class Main {
 
             switch (choice) {
                 case "1":
-                    subOptionMenu("create");
+                    subOptionMenu(Option.CREATE);
                     break;
                 case "2":
-                    subOptionMenu("open");
+                    subOptionMenu(Option.OPEN);
                     break;
                 case "3":
-                    subOptionMenu("modify");
+                    subOptionMenu(Option.MODIFY);
                     break;
                 case "4":
-                    subOptionMenu("search");
+                    subOptionMenu(Option.SEARCH);
                     break;
                 case "0":
                     System.exit(0);
@@ -79,7 +79,7 @@ public class Main {
      *
      * @param mainOption the main option selected from the main menu.
      */
-    public static void subOptionMenu(String mainOption) {
+    public static void subOptionMenu(Option mainOption) {
         boolean isAbsolute = false;
         boolean exited = false;
         boolean navMenuUsed;
@@ -131,16 +131,17 @@ public class Main {
      * @param mainOption the main option selected from the main menu
      * @param currNavDir the current directory you are looking at in the directory navigator system (passed as null by default, unless called by DirectoryNavigator.java)
      */
-    public static void execOptionUntilSuccessful(boolean isAbsolute, String mainOption, String currNavDir) {
+    public static void execOptionUntilSuccessful(boolean isAbsolute, Option mainOption, String currNavDir) {
         /* this map allows the appropriate method to be called based on the param mainOption,
         * alternatively you could use a switch statement, but you would need several switch statements,
         * and all sets of switch statements would need to expand everytime you added a new main option, 
         * however, this can cause some strange special cases */
-        Map <String, BiFunction<String, Boolean, Boolean>> optionToExec = Map.of(
-                "create", Create::createFile,
-                "open", Open::openFile,
-                "modify", Modify::modifyFile,
-                "search", Search::searchForFile
+
+        Map <Option, BiFunction<String, Boolean, Boolean>> optionToExec = Map.of(
+                Option.CREATE, Create::createFile,
+                Option.OPEN, Open::openFile,
+                Option.MODIFY, Modify::modifyFile,
+                Option.SEARCH, Search::searchForFile
         );
 
         BiFunction<String, Boolean, Boolean> method = optionToExec.get(mainOption);
@@ -170,7 +171,7 @@ public class Main {
      * @param currNavDir the current directory you are looking at in the directory navigator system (passed as null by default, unless called by DirectoryNavigator.java)
      * @return The appropriately formatted file name for the specific operation to be executed
      */
-    private static String setupFileName(boolean isAbsolute, String mainOption, String currNavDir) {
+    private static String setupFileName(boolean isAbsolute, Option mainOption, String currNavDir) {
         String fileName = "";
 
         // always add the current directory if given (passed by calls within DirectoryNavigator.java)
@@ -181,7 +182,7 @@ public class Main {
         // special case: if main option is search, and we are executing in the program's default folder (isAbsolute is false)
         // or we are executing in a given directory from the DirectoryNavigator (currNavDir is not empty),
         // then we must not add a subdirectory name. We just execute the option where given
-        if (!(mainOption.equals("search") && (!isAbsolute || currNavDir != null))) {
+        if (!(mainOption == Option.SEARCH && (!isAbsolute || currNavDir != null))) {
             if (!isAbsolute || currNavDir != null) {
                 fileName += UserInput.getFileNameInput();
             } else {
@@ -210,13 +211,16 @@ public class Main {
      *
      * @param mainOption the main option selected from the main menu
      */
-    public static void printSubOptions(String mainOption) {
+    public static void printSubOptions(Option mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
-        System.out.println("Please input one of the following: ");
-        System.out.println("Input '1' if you would like to " + mainOption + " a file in the program's default directory.");
-        System.out.println("Input '2' if you would like to " + mainOption + " a file in an inputted absolute file path.");
-        System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file.");
+        // converting enum to a lowercase string to add to the message
+        String action = mainOption.toString().toLowerCase();
+
+        System.out.println("Please input one of the following:");
+        System.out.println("Input '1' if you would like to " + action + " a file in the program's default directory.");
+        System.out.println("Input '2' if you would like to " + action + " a file in an inputted absolute file path.");
+        System.out.println("Input '3' if you would like to navigate directories to " + action + " a file.");
         System.out.println("Input '0' if you would like to exit.\n");
         System.out.print("Please input an option: ");
     }

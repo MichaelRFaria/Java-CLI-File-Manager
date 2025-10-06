@@ -11,7 +11,7 @@ public class DirectoryNavigator {
      * @param path the absolute file path location of the directory that you want to start navigating from.
      * @return null by default, unless {@code mainOption} is "move", where it will return the absolute file path of the directory currently shown.
      */
-    public static String navigateDirs(String mainOption, String path) {
+    public static String navigateDirs(Option mainOption, String path) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         // creating the File object with the starting directory to display
@@ -40,14 +40,14 @@ public class DirectoryNavigator {
                     switch (mainOption) {
                         /* for the main options we will execute the option until successful, and then update our directoryContents array with the new contents of the directory .
                         * specifically creating a file, and modifying a file (by either renaming or deleting a file) require us to refresh the directoryContents array */
-                        case "create", "open", "modify", "search":
+                        case CREATE, OPEN, MODIFY, SEARCH:
                             Main.execOptionUntilSuccessful(true, mainOption, navigate + "\\");
 
                             directoryContents = navigate.listFiles();
                             break;
                         /* Modify.moveFile calls this method with the "move" mainOption parameter, in this case, we are calling this method
                         * to obtain a destination, to move our file to, therefore we return the currently shown directory's absolute file path */
-                        case "move":
+                        case MOVE:
                             return navigate.getAbsolutePath();
                     }
                     break;
@@ -148,7 +148,7 @@ public class DirectoryNavigator {
      * @param currDirPath the absolute file path of the directory that will be displayed.
      * @param mainOption the name of the operation we are executing in the directory.
      */
-    public static void updateNavigationMenu(int viewType, int currentPage, int filesPerPage, File[] directoryContents, String currDirPath, String mainOption) {
+    public static void updateNavigationMenu(int viewType, int currentPage, int filesPerPage, File[] directoryContents, String currDirPath, Option mainOption) {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         // figuring out what the view type is, so we can display it on screen
@@ -260,27 +260,29 @@ public class DirectoryNavigator {
      * @param mainOption the name of the operation we are executing.
      * @return the message of the operation we are executing.
      */
-    private static String getActionMessage(String mainOption) {
+    private static String getActionMessage(Option mainOption) {
+        // converting the enum to a lowercase string to add to the message
+        String strOption = mainOption.toString().toLowerCase();
         String action;
 
         /* if we have entered the path/name of a folder into the open operation,
         then we are just viewing the contents of the folder and are not executing any option */
-        if (mainOption.equals("view")) {
+        if (strOption.equals("view")) {
             action = "";
         /* otherwise we need to print the appropriate message we are navigating the directories to execute
         * "move" is a special case, as we can only move files, so we say "file" instead of "file/folder"
         * "open" is also a special case as realistically we should only be able to open files, so we also say "file" instead of "file/folder",
         * this is because opening a folder would just open this DirectoryNavigator system again, though it's technically allowed.
         * we could just have two else if's but that is lame and this is shorter */
-        } else if (mainOption.equals("move") || mainOption.equals("open")) {
+        } else if (strOption.equals("move") || strOption.equals("open")) {
             // we use a ternary operator to get the correct preposition
-            action = "'$' to " + mainOption + " a file " + ((mainOption.equals("move")) ? "into" : "in") + " this directory,";
+            action = "'$' to " + strOption + " a file " + ((strOption.equals("move")) ? "into" : "in") + " this directory,";
         /* remaining options are create, search, modify
         * search is a special case as without "for" the sentence is grammatically incorrect.
         * we could just have two else if's but that is lame and this is shorter */
         } else {
             // we use a ternary operator to get the correct preposition
-            action = "'$' to " + mainOption + ((mainOption.equals("search")) ? " for" : "") + " a file/folder in this directory,";
+            action = "'$' to " + strOption + ((strOption.equals("search")) ? " for" : "") + " a file/folder in this directory,";
         }
         return action;
     }

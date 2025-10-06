@@ -191,7 +191,7 @@ public class Modify {
                 case "2":
                     /* by passing "move" as the mainOption parameter,
                     * this method will return the absolute path of the currently shown directory */
-                    destination = DirectoryNavigator.navigateDirs("move", file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1));
+                    destination = DirectoryNavigator.navigateDirs(Option.MOVE, file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1));
 
                     /* if we exit from the directory navigator menu, we return "exit",
                     * in this case we go back to the start of the loop and request the user to pick another option */

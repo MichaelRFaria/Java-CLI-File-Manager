@@ -89,7 +89,7 @@ public class Open {
                 }
             // opening a folder
             case "":
-                DirectoryNavigator.navigateDirs("view", file.getAbsolutePath());
+                DirectoryNavigator.navigateDirs(Option.VIEW, file.getAbsolutePath());
                 return true;
             default:
                 System.out.println("This program is not able to work on files with the " + fileExtension + " file extension.");

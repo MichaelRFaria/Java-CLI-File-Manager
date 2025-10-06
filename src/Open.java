@@ -71,7 +71,7 @@ public class Open {
                     return true;
                 } catch (FileNotFoundException e) {
                     System.out.println("File was not found, please try again.");
-                    Utils.delay();
+                    Utils.delay(1500);
                     return false;
                 }
             case "exe":
@@ -80,7 +80,7 @@ public class Open {
                     String dir = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\'));
                     Runtime.getRuntime().exec(file.getAbsolutePath(), null, new File(dir));
                     System.out.println("\nRunning the executable " + Utils.getActualFileName(file) + " at: " + file.getAbsolutePath());
-                    Utils.delay();
+                    Utils.delay(1500);
                     return true;
                 } catch (IOException e) {
                     System.out.println("An error occurred when starting the .exe");
@@ -93,7 +93,7 @@ public class Open {
                 return true;
             default:
                 System.out.println("This program is not able to work on files with the " + fileExtension + " file extension.");
-                Utils.delay();
+                Utils.delay(1500);
                 return false;
         }
     }

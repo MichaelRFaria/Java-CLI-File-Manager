@@ -23,7 +23,7 @@ public class Search {
         // we can only search within directories, we cannot search within an actual file
         } else if (!file.isDirectory()) {
             System.out.println("You must give a file directory to search for a file/folder in.");
-            Utils.delay();
+            Utils.delay(1500);
             return false;
         }
 
@@ -47,7 +47,7 @@ public class Search {
             * if entering the directory to search in via an absolute path or the directory navigator system */
             if (input.contains("*")) {
                 System.out.println("Operation cancelled.");
-                Utils.delay();
+                Utils.delay(500);
                 return true;
             }
 
@@ -79,7 +79,7 @@ public class Search {
             // returns true if files were found, hence we can then do a follow-up operation on one of those files
             if (printResults(matchingFiles, input)) {
                 // provides the option for a follow-up operation on a search result
-                handleSuboptions(matchingFiles);
+                handleSubOptions(matchingFiles);
                 return true;
             }
 
@@ -110,7 +110,7 @@ public class Search {
             System.out.println("\nThe following " + fileType + "s found are located at: ");
 
             for (int i = 0; i < results.size(); i++) {
-                /* we print each result with a number before it so it can be easily selected,
+                /* we print each result with a number before it, so it can be easily selected,
                 * if the user chooses to execute a follow-up operation */
                 System.out.println(i+1 + ": " + results.get(i).getAbsolutePath());
             }
@@ -121,7 +121,7 @@ public class Search {
         * which will cause them to be prompted to enter another file name to search */
         } else {
             System.out.println("\nNo " + fileType + "s called " + matchingString + " were found. Please try again.");
-            Utils.delay();
+            Utils.delay(1500);
             return false;
         }
     }
@@ -131,7 +131,7 @@ public class Search {
      *
      * @param results the array of matching files that match the inputted search name.
      */
-    public static void handleSuboptions(ArrayList<File> results) {
+    public static void handleSubOptions(ArrayList<File> results) {
         while (true) {
             System.out.println("\nPlease input one of the following:");
             System.out.println("Input '1' if you would like to open/run one of the search results.");
@@ -159,7 +159,7 @@ public class Search {
                     return;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    Utils.delay();
+                    Utils.delay(1500);
                     break; // loops
             }
         }
@@ -184,7 +184,7 @@ public class Search {
                 continue;
             } else if (choice > results.size()) {
                 System.out.println("Number does not correspond to a search result.");
-                Utils.delay();
+                Utils.delay(1500);
                 continue;
             }
 

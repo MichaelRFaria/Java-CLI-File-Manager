@@ -69,13 +69,13 @@ public class Main {
                     break;
                 default:
                     System.out.println("Invalid input. Please try again.");
-                    Utils.delay();
+                    Utils.delay(1500);
             }
         }
     }
 
     /**
-     * Displays the suboptions menu and handles user inputs into the menu.
+     * Displays the sub-options menu and handles user inputs into the menu.
      *
      * @param mainOption the main option selected from the main menu.
      */
@@ -112,7 +112,7 @@ public class Main {
                     break;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    Utils.delay();
+                    Utils.delay(1500);
                     continue;
             }
             
@@ -151,10 +151,10 @@ public class Main {
         do {
             String fileName = setupFileName(isAbsolute, mainOption, currNavDir);
 
-            // when an operation is cancelled we return out of this method, bringing us back to the previous suboption menu
+            // when an operation is cancelled we return out of this method, bringing us back to the previous sub-option menu
             if (fileName.contains("*")) {
                 System.out.println("Operation cancelled.");
-                Utils.delay();
+                Utils.delay(500);
                 return;
             }
 
@@ -193,7 +193,7 @@ public class Main {
 
 
     /**
-     * This method reprints the main menu text, upon exiting from a suboption menu, however, it skips the introductory 3 lines, only requesting and displaying input options.
+     * This method reprints the main menu text, upon exiting from a sub-option menu, however, it skips the introductory 3 lines, only requesting and displaying input options.
      */
     public static void reprintMainMenuOptions() {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
@@ -203,10 +203,10 @@ public class Main {
         }
     }
 
-    // todo - these suboptions are phrased weirdly, maybe add a case statement that changes the print statements more, e.g: when passing search option 2 and 3 should say "folder" instead of "file"
+    // todo - these subscriptions are phrased weirdly, maybe add a case statement that changes the print statements more, e.g: when passing search option 2 and 3 should say "folder" instead of "file"
 
     /**
-     * This method prints the suboptions, substituting the verb with the appropriate {@code mainOption}.
+     * This method prints the sub-options, substituting the verb with the appropriate {@code mainOption}.
      *
      * @param mainOption the main option selected from the main menu
      */

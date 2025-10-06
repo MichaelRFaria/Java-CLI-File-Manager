@@ -132,7 +132,7 @@ public class DirectoryNavigator {
                     // otherwise, we inform the user that no subdirectory was found
                     } else {
                         System.out.println("There is no subdirectory with the inputted name, please try again.");
-                        Utils.delay();
+                        Utils.delay(1500);
                     }
                     break;
             }
@@ -198,7 +198,7 @@ public class DirectoryNavigator {
 
         // printing the menu controls, along with the correct action based on what we are attempting to execute
         System.out.println("Input a subdirectory name to enter a subdirectory, " + action + "'!' to switch between viewing folders, files or both, '^' to exit the current directory," +
-                "\n '<','<<' and '>','>>' to navigate between pages, '%' to change how many files are shown per page, and '~' to exit the back to the sub menu.");
+                "\n '<','<<' and '>','>>' to navigate between pages, '%' to change how many files are shown per page, and '~' to exit the back to the previous menu.");
     }
 
     /**

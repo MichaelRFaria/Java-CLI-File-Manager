@@ -2,7 +2,7 @@ import java.io.File;
 
 public class Utils {
     /**
-     * Helper method to parse a {@code String} input, taken from the {@code Scanner}, into an int so it can be worked on.
+     * Helper method to parse a {@code String} input, taken from the {@code Scanner}, into an int, so it can be worked on.
      * Only accepts positive integers.
      * On an invalid input provides an appropriate error message.
      *
@@ -21,7 +21,7 @@ public class Utils {
 
             if (parsedVal <= 0) {
                 System.out.println("Please enter a positive integer.");
-                Utils.delay();
+                Utils.delay(1500);
                 // we return -1, which the caller will evaluate and handle the failure
                 return -1;
             } else {
@@ -29,19 +29,22 @@ public class Utils {
             }
         } catch (NumberFormatException e) {
             System.out.println("Please enter an integer.");
-            Utils.delay();
+            Utils.delay(1500);
             // we return -1, which the caller will evaluate and handle the failure
             return -1;
         }
     }
 
     /**
-     * This method creates a {@code Thread} that sleeps for 1.5 seconds (1500 milliseconds).
-     * Used to create a time window where printed messages can be read by the user, before the program continues.
+     * This method creates a {@code Thread} that sleeps {@code Time} milliseconds.
+     * Used to create a window of time when printed messages can be read by the user
+     * or a window of time between an input and a result for a smoother console, before the program continues.
+     *
+     * @param time how long to delay
      */
-    public static void delay() {
+    public static void delay(int time) {
         try {
-            Thread.sleep(1500);
+            Thread.sleep(time);
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
@@ -73,7 +76,7 @@ public class Utils {
         File file = new File(fullFileName);
         if (!file.exists()) {
             System.out.println("The " + message + " was not found, please try again.");
-            delay();
+            delay(1500);
             return null;
         }
         return file;

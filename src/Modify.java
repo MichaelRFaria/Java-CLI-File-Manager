@@ -59,7 +59,7 @@ public class Modify {
                     return true;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    Utils.delay();
+                    Utils.delay(1500);
                     break;
             }
         }
@@ -92,7 +92,7 @@ public class Modify {
         // when the rename operation is cancelled, we return the original file.
         if (newFileName.contains("*")) {
             System.out.println("Operation cancelled.");
-            Utils.delay();
+            Utils.delay(500);
             return file;
         }
 
@@ -119,7 +119,7 @@ public class Modify {
         System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful, please try again.");
 
         // delaying to ensure the above message has time to be read
-        Utils.delay();
+        Utils.delay(1500);
 
         /* if we are successful we return the newly renamed file
         * if we are unsuccessful we return the original file parameter. */
@@ -144,7 +144,7 @@ public class Modify {
         * (technically folders can have dots in their names in Windows, but this program does not recognise it that way*/
         if (posOfDot == -1) {
             System.out.println("Cannot perform the move operation on a folder. Please try with a file instead.");
-            Utils.delay();
+            Utils.delay(1500);
             return null;
         }
 
@@ -170,7 +170,7 @@ public class Modify {
                     // if we choose to cancel the move operation, we stop here and return the original file parameter
                     if (destination.contains("*")) {
                         System.out.println("Operation cancelled.");
-                        Utils.delay();
+                        Utils.delay(500);
                         return file;
                     }
 
@@ -184,7 +184,7 @@ public class Modify {
                     // if the input does not lead to a directory, we print a message and continue the loop
                     } else {
                         System.out.println("This directory does not exist, please try again.");
-                        Utils.delay();
+                        Utils.delay(1500);
                         continue;
                     }
                 // entering the destination via the directory navigator system
@@ -209,7 +209,7 @@ public class Modify {
                     return file;
                 default:
                     System.out.println("Please input an option from the list above, try again.");
-                    Utils.delay();
+                    Utils.delay(1500);
             }
         }
 
@@ -224,7 +224,7 @@ public class Modify {
         System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful, please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
-        Utils.delay();
+        Utils.delay(1500);
         if (successful) {
             return newFile;
         } else {
@@ -246,7 +246,7 @@ public class Modify {
         System.out.println(successful ? "Successfully deleted " + Utils.getActualFileName(file) : Utils.getActualFileName(file) + " could not be deleted, please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
-        Utils.delay();
+        Utils.delay(1500);
         return successful;
     }
 
@@ -260,7 +260,7 @@ public class Modify {
         * in this case we simply print an error message and return out of the method */
         if (!Utils.getActualFileName(file).substring(Utils.getActualFileName(file).lastIndexOf('.') + 1).equals("txt")) { // checking if we are working on a text file
             System.out.println("This option is only compatible with text files.");
-            Utils.delay();
+            Utils.delay(1500);
             return;
         }
 
@@ -309,7 +309,7 @@ public class Modify {
                             System.out.println("Writer could not be opened. Please try again.");
                         }
 
-                        Utils.delay();
+                        Utils.delay(1500);
                         break;
                     // removing lines from the file
                     case "2":
@@ -326,7 +326,7 @@ public class Modify {
                         // if you enter a non-integer, it loops again, requesting another input.
                         } catch (NumberFormatException e) {
                             System.out.println("Please enter an integer option.");
-                            Utils.delay();
+                            Utils.delay(1500);
                             break;
                         }
 
@@ -360,7 +360,7 @@ public class Modify {
                         /* we close the reader to prevent it from "locking" the file,
                         * which will prevent other operations from being able to execute on the file */
                         reader.close();
-                        Utils.delay();
+                        Utils.delay(1500);
                         break;
                     // adding a line break
                     case "3":
@@ -373,7 +373,7 @@ public class Modify {
                             writer.flush();
                         }
 
-                        Utils.delay();
+                        Utils.delay(500);
                         break;
                     // clearing the file
                     case "4":
@@ -387,7 +387,7 @@ public class Modify {
                             // opening FileWriter without append mode, automatically clears the file
                             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {}
 
-                            Utils.delay();
+                            Utils.delay(500);
                         }
                         break;
                     // exiting
@@ -395,7 +395,7 @@ public class Modify {
                         return;
                     default:
                         System.out.println("Please input an option from the list above, try again.");
-                        Utils.delay();
+                        Utils.delay(1500);
                         break;
                 }
             } catch (IOException e) {

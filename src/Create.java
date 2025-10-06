@@ -45,7 +45,7 @@ public class Create {
             }
 
             // ensuring there is enough time for the above message to be read
-            Utils.delay();
+            Utils.delay(1500);
 
             return created;
         } catch (IOException e) {

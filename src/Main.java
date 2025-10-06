@@ -8,11 +8,11 @@ public class Main {
     * We need to be able to access the defaultPath when handling operations in the default program folder "output". */
     private static final Scanner scanner = new Scanner(System.in);
     private static String defaultPath;
-    private static final String[] mainMenuText = {"Welcome to the Command Line File Handler", "This program allows you to perform several operations on files and folders",
-            "Including: creating, reading/running, modifying and searching files/folders\n","Please input one of the following:",
-            "Input '1' if you would like to create a new file/folder", "Input '2' if you would like to read/run from an existing file/folder",
-            "Input '3' if you would like to modify an existing file/folder", "Input '4' if you would like to search for an existing file/folder",
-            "Input '0' if you would like to exit\n", "Please input an option: "};
+    private static final String[] mainMenuText = {"Welcome to the Command Line File Handler.", "This program allows you to perform several operations on files and folders.",
+            "Including: creating, reading/running, modifying and searching files/folders.\n","Please input one of the following:",
+            "Input '1' if you would like to create a new file/folder.", "Input '2' if you would like to read/run from an existing file/folder.",
+            "Input '3' if you would like to modify an existing file/folder.", "Input '4' if you would like to search for an existing file/folder.",
+            "Input '0' if you would like to exit.\n", "Please input an option: "};
 
     /*
     todo before finishing the project
@@ -68,7 +68,7 @@ public class Main {
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Invalid input. Please try again");
+                    System.out.println("Invalid input. Please try again.");
                     Utils.delay();
             }
         }
@@ -214,11 +214,11 @@ public class Main {
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
         System.out.println("Please input one of the following: ");
-        System.out.println("Input '1' if you would like to " + mainOption + " a file in the program's default directory");
-        System.out.println("Input '2' if you would like to " + mainOption + " a file in an inputted absolute file path");
-        System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file");
-        System.out.println("Input '0' if you would like to exit\n");
-        System.out.println("Please input an option: ");
+        System.out.println("Input '1' if you would like to " + mainOption + " a file in the program's default directory.");
+        System.out.println("Input '2' if you would like to " + mainOption + " a file in an inputted absolute file path.");
+        System.out.println("Input '3' if you would like to navigate directories to " + mainOption + " a file.");
+        System.out.println("Input '0' if you would like to exit.\n");
+        System.out.print("Please input an option: ");
     }
 
     /**

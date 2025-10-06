@@ -24,12 +24,7 @@ public class Open {
         // if the file has a '.' then we are working on a file, and must extract the file extension to figure out what we are working on
         if (posOfDot != -1) {
             fileExtension = Utils.getActualFileName(file).substring(posOfDot + 1);
-        // if the file does not have a '.', then we must be working on a folder, which is not possible
-        }/* else {
-            System.out.println("We cannot execute or read a folder, please try with a file.");
-            Main.delay();
-            return false;
-        } */
+        }
 
         /*
         todo
@@ -66,7 +61,7 @@ public class Open {
                     /* if we are not calling this method from the Modify class, then we have the option of closing the file via a user input
                     * if the conditional is false the stack trace would appear as ...->Modify.modifyFile->Modify.editTextFile->Open.openFile*/
                     if (!Thread.currentThread().getStackTrace()[2].getClassName().equals("Modify")) {
-                        System.out.println("\nEnter any character to close the text file.");
+                        System.out.print("\nEnter any character to close the text file.");
                         // scanner prevents the program from continuing until an input is given, thus the text file content's remain on screen until the user is ready to exit
                         Main.getScanner().nextLine().trim();
                     }
@@ -88,7 +83,7 @@ public class Open {
                     Utils.delay();
                     return true;
                 } catch (IOException e) {
-                    System.out.println("an error occurred when starting the .exe");
+                    System.out.println("An error occurred when starting the .exe");
                     e.printStackTrace();
                     return false;
                 }

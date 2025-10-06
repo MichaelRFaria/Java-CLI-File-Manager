@@ -9,7 +9,7 @@ public class UserInput {
     public static String getFileNameInput() {
         while (true) {
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-            System.out.println("Please input a valid file/folder name (or '*' to cancel): ");
+            System.out.print("Please input a valid file/folder name (or '*' to cancel): ");
 
             String input = Main.getScanner().nextLine().trim();
 
@@ -22,7 +22,7 @@ public class UserInput {
             } else if (input.matches("[a-zA-Z0-9_\\-.]+") && input.length() < 255 && !input.endsWith(" ") && !input.endsWith(".")) { // name checking rules go here
                 return input;
             } else {
-                System.out.println("File name input is invalid. Please try again.");
+                System.out.println("File name input is invalid, please try again.");
                 Utils.delay();
             }
         }
@@ -36,7 +36,7 @@ public class UserInput {
     public static String getAbsolutePathInput() {
         while (true) {
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
-            System.out.println("Please input a valid absolute path (or '*' to cancel): ");
+            System.out.print("Please input a valid absolute path (or '*' to cancel): ");
 
             String input = Main.getScanner().nextLine().trim();
 
@@ -51,7 +51,7 @@ public class UserInput {
             if (temp.isAbsolute()) { // path checking rules go here
                 return input;
             } else {
-                System.out.println("File path is entered incorrectly. Please try again.");
+                System.out.println("File path is entered incorrectly, please try again.");
                 Utils.delay();
             }
         }

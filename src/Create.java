@@ -22,8 +22,6 @@ public class Create {
             fullFileName = Main.getDefaultPath() + fileName;
         }
 
-        System.out.println("creating file/folder");
-
         try {
             boolean created;
             File file = new File(fullFileName);
@@ -41,9 +39,9 @@ public class Create {
 
             // printing success/error message
             if (created) {
-                System.out.println("successfully created " + file.getName());
+                System.out.println("Successfully created " + file.getName());
             } else {
-                System.out.println(file.getName() + " already exists");
+                System.out.println(file.getName() + " already exists, please try again.");
             }
 
             // ensuring there is enough time for the above message to be read

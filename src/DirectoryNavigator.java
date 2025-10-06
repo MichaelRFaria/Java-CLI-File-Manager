@@ -16,10 +16,7 @@ public class DirectoryNavigator {
 
         // creating the File object with the starting directory to display
         File navigate = new File(path);
-        //System.out.println(path);
         File[] directoryContents = navigate.listFiles();
-
-        //System.out.println(navigate.getAbsolutePath());
 
         // variables to handle which files are currently being displayed
         int currentPage = 1;
@@ -69,7 +66,7 @@ public class DirectoryNavigator {
                         directoryContents = navigate.listFiles();
                     // otherwise we cannot exit the current subdirectory (this case only happens at the root directory)
                     } else {
-                        System.out.println("There is no parent directory. Please pick another option");
+                        System.out.println("There is no parent directory, please pick another option");
                     }
                     /* we reset currentPage to 1, when exiting directories, not just for convenience for the user, but also as the current page number,
                      * may exceed the new total number of pages */
@@ -134,7 +131,7 @@ public class DirectoryNavigator {
                         currentPage = 1;
                     // otherwise, we inform the user that no subdirectory was found
                     } else {
-                        System.out.println("There is no subdirectory with the inputted name. Please try again.");
+                        System.out.println("There is no subdirectory with the inputted name, please try again.");
                         Utils.delay();
                     }
                     break;

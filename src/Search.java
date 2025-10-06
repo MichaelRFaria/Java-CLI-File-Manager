@@ -39,7 +39,7 @@ public class Search {
 
         // we loop until we successfully find an inputted file, or the operation is cancelled by the user
         while (true) {
-            System.out.println("Please input the name of the file/folder that you would like to search for (or '*' to cancel): ");
+            System.out.print("Please input the name of the file/folder that you would like to search for (or '*' to cancel): ");
             input = Main.getScanner().nextLine().trim();
 
             /* when the search operation is cancelled, we return true, to return us fully out of the menu
@@ -133,11 +133,11 @@ public class Search {
      */
     public static void handleSuboptions(ArrayList<File> results) {
         while (true) {
-            System.out.println("\nPlease input one of the following: ");
-            System.out.println("Input '1' if you would like to open/run one of the search results."); // should not work on folders
+            System.out.println("\nPlease input one of the following:");
+            System.out.println("Input '1' if you would like to open/run one of the search results.");
             System.out.println("Input '2' if you would like to modify one of the search results.");
             System.out.println("Input '0' if you would like to not execute on any result and exit this menu.");
-            System.out.println("\nPlease input an option: ");
+            System.out.print("\nPlease input an option: ");
 
             String input = Main.getScanner().nextLine().trim();
 

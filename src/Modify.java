@@ -110,14 +110,13 @@ public class Modify {
         * or we are renaming a file, in which both file extensions must be equal */
         if (fileExtension.equals(newFileExtension)) {
             successful = file.renameTo(renamedFile);
-            //System.out.println(successful);
         }
 
         // configuring the correct noun, based on the presence or lack of a file extension
         String message = fileExtension.isEmpty() ? "Folder" : "File";
 
         // printing appropriate message based on if the operation was successful
-        System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful. Please try again.");
+        System.out.println(successful ? message + " was successfully renamed." : message + " renaming was unsuccessful, please try again.");
 
         // delaying to ensure the above message has time to be read
         Utils.delay();
@@ -155,11 +154,11 @@ public class Modify {
         while (!destinationEntered) {
             System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
 
-            System.out.println("Please input one of the following: ");
-            System.out.println("Input '1' if you would like to enter the destination via an absolute path");
-            System.out.println("Input '2' if you would like to enter the destination via navigating the directories");
-            System.out.println("Input '0' if you would like to exit");
-            System.out.println("\nPlease input an option: ");
+            System.out.println("Please input one of the following:");
+            System.out.println("Input '1' if you would like to enter the destination via an absolute path.");
+            System.out.println("Input '2' if you would like to enter the destination via navigating the directories.");
+            System.out.println("Input '0' if you would like to exit.");
+            System.out.print("\nPlease input an option: ");
 
             String input = Main.getScanner().nextLine().trim();
 
@@ -218,11 +217,11 @@ public class Modify {
 
         // we append the actual file name to the destination where the file is to be moved
         File newFile = new File(destination + "\\" + Utils.getActualFileName(file));
-        System.out.println(destination + "\\" + Utils.getActualFileName(file));
+        //System.out.println(destination + "\\" + Utils.getActualFileName(file));
         boolean successful = file.renameTo(newFile);
 
         // printing appropriate message based on if the operation was successful
-        System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful. Please try again.");
+        System.out.println(successful ? "File was successfully moved." : "File moving was unsuccessful, please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
         Utils.delay();
@@ -240,13 +239,11 @@ public class Modify {
      * @return whether the file was deleted successfully.
      */
     public static boolean deleteFile(File file) {
-        System.out.println("deleting file");
-
         // deleting the file
         boolean successful = file.delete();
 
         // printing appropriate message based on if the operation was successful
-        System.out.println(successful ? "Successfully deleted " + Utils.getActualFileName(file) : Utils.getActualFileName(file) + " could not be deleted. Please try again.");
+        System.out.println(successful ? "Successfully deleted " + Utils.getActualFileName(file) : Utils.getActualFileName(file) + " could not be deleted, please try again.");
 
         // ensuring there is enough time for either of the above messages to be read
         Utils.delay();
@@ -273,13 +270,13 @@ public class Modify {
             * this method call is in the loop so the user can see the changes as they are made */
             Open.openFile(file.getAbsolutePath(), true);
 
-            System.out.println("\nNow please input one of the following: ");
-            System.out.println("Input '1' if you would like to write lines to the file");
-            System.out.println("Input '2' if you would like to remove a number of lines from the file");
-            System.out.println("Input '3' if you would like to add a line break to the file");
-            System.out.println("Input '4' if you would like to clear the file");
-            System.out.println("Input '0' if you would like to stop editing the file");
-            System.out.println("\nPlease input an option: ");
+            System.out.println("\nNow please input one of the following:");
+            System.out.println("Input '1' if you would like to write lines to the file.");
+            System.out.println("Input '2' if you would like to remove a number of lines from the file.");
+            System.out.println("Input '3' if you would like to add a line break to the file.");
+            System.out.println("Input '4' if you would like to clear the file.");
+            System.out.println("Input '0' if you would like to stop editing the file.");
+            System.out.print("\nPlease input an option: ");
 
             String input = Main.getScanner().nextLine().trim();
 
@@ -385,7 +382,7 @@ public class Modify {
 
                         // we check for user input confirming to clear the file
                         if (input.equalsIgnoreCase("y")) {
-                            System.out.println("\nClearing the file contents");
+                            System.out.println("\nClearing the file contents...");
 
                             // opening FileWriter without append mode, automatically clears the file
                             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {}
@@ -418,13 +415,13 @@ public class Modify {
 
         System.out.println(System.lineSeparator().repeat(50)); // clears console in a way that is not environment-dependent
         System.out.println("Now modifying the " + message + ": " + Utils.getActualFileName(file) + " located at: " + file.getAbsolutePath() + "\n");
-        System.out.println("Please input one of the following: ");
-        System.out.println("Input '1' if you would like to rename this file");
-        System.out.println("Input '2' if you would like to move this file");
-        System.out.println("Input '3' if you would like to delete this file");
-        System.out.println("Input '4' if you would like to edit the contents of this file (text files only)");
-        System.out.println("Input '0' if you would like to exit from this menu");
-        System.out.println("\nPlease input an option: ");
+        System.out.println("Please input one of the following:");
+        System.out.println("Input '1' if you would like to rename this file.");
+        System.out.println("Input '2' if you would like to move this file.");
+        System.out.println("Input '3' if you would like to delete this file.");
+        System.out.println("Input '4' if you would like to edit the contents of this file (text files only.)");
+        System.out.println("Input '0' if you would like to exit from this menu.");
+        System.out.print("\nPlease input an option: ");
     }
 }
 
